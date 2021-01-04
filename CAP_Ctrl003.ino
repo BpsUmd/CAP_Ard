@@ -15,13 +15,18 @@
 //*********************************************************************************
 //*********************************************************************************
 void setup() {
+    Serial.begin(115200);
+    delay(300);
+    Serial.println("Port setting...");
     InitPort();//ポートのイニシャライズ
+    Serial.println("Port setting completed");
+    Serial.println("LED display...");
 #ifdef DEBUG_TIME_SEND
     digitalWrite(PORT_LED, LED_ON);
     digitalWrite(PORT_LED_PE, LED_ON);
     digitalWrite(PORT_LED_W, LED_ON);
     digitalWrite(PORT_LED_AIR, LED_ON);
-    delay(3000);
+    delay(2000);
     digitalWrite(PORT_LED, LED_OFF);
     digitalWrite(PORT_LED_PE, LED_OFF);
     digitalWrite(PORT_LED_W, LED_OFF);
@@ -32,12 +37,18 @@ void setup() {
     FlashLED(PORT_LED_W, 3, 50, LED_OFF);
     FlashLED(PORT_LED_AIR, 3, 50, LED_OFF);
 #endif //DEBUG_TIME_SEND
+    Serial.println("LED display done");
 
     //割り込み設定
     attachInterrupt(INT_NUM_AREA2, FlgSetAir2, FALLING);
     attachInterrupt(INT_NUM_AREA3, FlgSetAir3, FALLING);
 
-    Serial.begin(115200);
+#ifdef DEBUG_TIME_SEND
+    Serial.println("Mode : Debug -time send-");
+#else
+    Serial.println("Mode : Normal");
+#endif
+    Serial.println("-----Start-----");
 }
 
 //*********************************************************************************
