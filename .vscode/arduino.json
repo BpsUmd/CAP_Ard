@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:uno",
     "port": "COM3",
-    "sketch": "UMD_NOTE\\CAP_Ctrl003.ino"
+    "sketch": "CAP_Ctrl003.ino"
 }
