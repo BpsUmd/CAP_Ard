@@ -7,6 +7,7 @@ extern int DebugCntAAA;
 
 extern long AryStsPE[13];
 extern long AryStsW[13];
+
 enum _EnmArySts
 {
     areaState = 0,
@@ -22,6 +23,14 @@ enum _EnmArySts
     timeAirInterval,
     timeIntervalMin,
     timeIntervalAvr
+};
+
+enum _StateTransition
+{
+    enm_StsWaitDetection = 0,
+    enm_StsWaitAddition,
+    enm_StsWaitPassOff,
+    enm_StsAirSignal
 };
 
 void InitPort();

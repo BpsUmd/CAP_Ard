@@ -62,33 +62,35 @@ void CtrlSignal(long *arySts, bool& flg, int areaNum)
     
     switch(arySts[areaState])
     {
-        //STATE_WAIT_DETECTION
+        //=============================
         //通常状態
-        case 0:
+        case enm_StsWaitDetection:
             if(digitalRead(arySts[portNumDetection]) == LOW)
-                ChangeState(arySts, STATE_WAIT_DETECTION);
-                //arySts[areaState] = STATE_WAIT_ADDITION;
+                ChangeState(arySts, enm_StsWaitPassOff);
             break;
-        //STATE_WAIT_ADDITION
+        //=============================
         //検知を受けた後の待ち時間(通過センサより先に反応したときの為に)
         //※■※PassOFFを割り込み反応にした為、必要なくなった
-        case 1:
+        case enm_StsWaitAddition:
             // if(CheckCnt(arySts[cntBuf], CNT_WAIT))
-            //     ChangeState(arySts, STATE_WAIT_DETECTION);
+            //     ChangeState(arySts, enm_StsWaitPassOff);
             break;
-        //STATE_WAIT_DETECTION
+
+        //=============================
         //検知の割込待ち状態　
         //※■※指定時間経っても割込が無い時は通常状態に戻す
-        case 2:
+        case enm_StsWaitPassOff:
+            //一定時間、割込みが無い場合は通常状態へ
             if(CheckCnt(arySts[cntBuf], CNT_FLG_CANCEL))
-                ChangeState(arySts, STATE_WAIT_DETECTION);
+                ChangeState(arySts, enm_StsWaitDetection);
             break;
-        //air signal on time
+
+        //=============================
         //エア命令ON時間
-        case 3:
+        case enm_StsAirSignal:
             if(CheckCnt(arySts[cntBuf], CNT_AIR_SIGNAL))
             {
-                ChangeState(arySts, STATE_WAIT_DETECTION);
+                ChangeState(arySts, enm_StsWaitDetection);
                 digitalWrite(arySts[portNumAir], LOW);
             }
             break;

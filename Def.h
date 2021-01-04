@@ -34,8 +34,3 @@
 
 #define AREA_NUM_PE 2
 #define AREA_NUM_W 3
-
-#define STATE_WAIT_DETECTION 0
-#define STATE_WAIT_ADDITION 1
-#define STATE_WAIT_PASS_OFF 2
-#define STATE_AIR_SIGNAL 3

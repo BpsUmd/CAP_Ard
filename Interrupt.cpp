@@ -5,14 +5,14 @@
 //*********************************************************************************
 void IntDetectionPE()
 {
-    if(AryStsPE[areaState] != STATE_WAIT_PASS_OFF) return;
+    if(AryStsPE[areaState] != enm_StsWaitPassOff) return;
     OrderAir(AryStsPE);
 }
 
 //*********************************************************************************
 void IntDetectionW()
 {
-    if(AryStsW[areaState] != STATE_WAIT_PASS_OFF) return;
+    if(AryStsW[areaState] != enm_StsWaitPassOff) return;
     OrderAir(AryStsW);
 }
 
@@ -20,6 +20,6 @@ void IntDetectionW()
 void OrderAir(long *arySts)
 {
     digitalWrite(arySts[portNumAir], HIGH);
-    arySts[areaState] = STATE_AIR_SIGNAL;
+    arySts[areaState] = enm_StsAirSignal;
     arySts[cntBuf] = 0;
 }

@@ -1,4 +1,4 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "cap_new_ide.ino"
+    "sketch": "CapState.ino"
 }
