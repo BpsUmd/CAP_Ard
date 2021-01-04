@@ -13,7 +13,8 @@
                 "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**",
                 "${workspaceFolder}",
-                "D:\\SNY_Doc\\Documents\\Arduino\\libraries\\**"
+                "D:\\SNY_Doc\\Documents\\Arduino\\libraries\\**",
+                "C:\\Users\\bpss-\\Documents\\Arduino\\libraries\\**"
             ],
             "browse": {
                 "path": [
