@@ -15,6 +15,7 @@
 //*********************************************************************************
 //*********************************************************************************
 void setup() {
+    Serial.begin(115200);
     InitPort();//ポートのイニシャライズ
 #ifdef DEBUG_TIME_SEND
     digitalWrite(PORT_LED, LED_ON);
@@ -34,17 +35,22 @@ void setup() {
 #endif //DEBUG_TIME_SEND
 
     //割り込み設定
-    attachInterrupt(INT_NUM_AREA2, IntDetectionPE, RISING);
-    attachInterrupt(INT_NUM_AREA3, IntDetectionW, RISING);
+    attachInterrupt(INT_NUM_AREA2, Int_SetPassOnTimePE, FALLING);
+    attachInterrupt(INT_NUM_AREA2, Int_DetectionPE, RISING);
 
-    Serial.begin(115200);
+    attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimeW, FALLING);
+    attachInterrupt(INT_NUM_AREA3, Int_DetectionW, RISING);
+
+    Serial.println("-----Start-----");
 }
 
 //*********************************************************************************
 void loop() 
 {
-    CtrlSignal(AryStsPE, FlgPE, AREA_NUM_PE);
-    CtrlSignal(AryStsW, FlgW, AREA_NUM_W);
+    //CtrlSignal(AryInfoPE, FlgPE, AREA_NUM_PE);
+    //CtrlSignal(AryInfoW, FlgW, AREA_NUM_W);
+    CtrlSignal(AryInfoPE);
+    CtrlSignal(AryInfoW);
 }
 //*********************************************************************************
 //*********************************************************************************
@@ -53,46 +59,81 @@ void loop()
 //*********************************************************************************
 //*********************************************************************************
 
-
-//*********************************************************************************
-void CtrlSignal(long *arySts, bool& flg, int areaNum)
+//void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
+void CtrlSignal(long *aryInfo)
 {
     long TimeBuf = 0;
     String strAreaName = "";
     
-    switch(arySts[areaState])
+    switch(aryInfo[areaState])
     {
         //=============================
         //通常状態
         case enm_StsWaitDetection:
-            if(digitalRead(arySts[portNumDetection]) == LOW)
-                ChangeState(arySts, enm_StsWaitPassOff);
+            //検知信号を受けたら "通過完了割込み待ち" へ
+            if(digitalRead(aryInfo[portNumDetection]) == LOW)
+                ChangeState(aryInfo, enm_StsWaitPassOff);
             break;
+
         //=============================
         //検知を受けた後の待ち時間(通過センサより先に反応したときの為に)
         //※■※PassOFFを割り込み反応にした為、必要なくなった
         case enm_StsWaitAddition:
-            // if(CheckCnt(arySts[cntBuf], CNT_WAIT))
-            //     ChangeState(arySts, enm_StsWaitPassOff);
+            // if(CheckCnt(aryInfo[cntBuf], CNT_WAIT))
+            //     ChangeState(aryInfo, enm_StsWaitPassOff);
+            ChangeState(aryInfo, enm_StsWaitDetection);
             break;
 
         //=============================
-        //検知の割込待ち状態　
+        //"通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
         //※■※指定時間経っても割込が無い時は通常状態に戻す
         case enm_StsWaitPassOff:
             //一定時間、割込みが無い場合は通常状態へ
-            if(CheckCnt(arySts[cntBuf], CNT_FLG_CANCEL))
-                ChangeState(arySts, enm_StsWaitDetection);
+            if(CheckCnt(aryInfo[cntBuf], CNT_FLG_CANCEL))
+                ChangeState(aryInfo, enm_StsWaitDetection);
+            break;
+
+        //=============================
+        //エア命令発信遅延
+        case enm_StsWaitAirOrder:
+            if(3 == 0)
+                ChangeState(aryInfo, enm_StsAirSignal);
+            else
+            {
+                //初回は時間をセット
+                if(aryInfo[flgAirOrderWait] == 0)
+                {
+                    //wait開始時間をセット
+                    GetTime(aryInfo[timeWaitStart]);
+                    //待ち時間をセット
+                    aryInfo[timeTargetBuf] = aryInfo[timePassSpeed] / TIME_DEVIDE;
+                    aryInfo[flgAirOrderWait] = 1;
+                }
+                else
+                {
+                    if(CheckElapsedTime(aryInfo[timeWaitStart], aryInfo[timePassSpeed]))
+                    {
+                        aryInfo[flgAirOrderWait] = 0;
+                        ChangeState(aryInfo, enm_StsAirSignal);
+                        digitalWrite(aryInfo[portNumAir], HIGH);
+                    }
+                }
+            }
             break;
 
         //=============================
         //エア命令ON時間
         case enm_StsAirSignal:
-            if(CheckCnt(arySts[cntBuf], CNT_AIR_SIGNAL))
+            if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL))
             {
-                ChangeState(arySts, enm_StsWaitDetection);
-                digitalWrite(arySts[portNumAir], LOW);
+                ChangeState(aryInfo, enm_StsWaitDetection);
+                digitalWrite(aryInfo[portNumAir], LOW);
             }
+            break;
+
+        //=============================
+        default:
+            ChangeState(aryInfo, enm_StsWaitDetection);
             break;
     }
 }
@@ -100,11 +141,11 @@ void CtrlSignal(long *arySts, bool& flg, int areaNum)
 
 
 //*********************************************************************************
-void ChangeState(long *arySts, int stateNum)
+void ChangeState(long *aryInfo, int stateNum)
 {
-    arySts[areaState] = stateNum;
+    aryInfo[areaState] = stateNum;
     
-    arySts[cntBuf] = 0;
+    aryInfo[cntBuf] = 0;
 }
 
 //*********************************************************************************

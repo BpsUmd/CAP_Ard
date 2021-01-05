@@ -3,16 +3,18 @@
 bool FlgPE = false;
 bool FlgW = false;
 int DebugCntAAA = 0;
-long AryStsPE[13] = {0,
+
+long AryInfoPE[16] = {0,
                      PORT_SENSOR_PASS_2,
                      PORT_DETECTION_PE,
                      PORT_AIR_PE,
-                     0,0,0,0,0,0,0,0,0};
-long AryStsW[13] = {0,
+                     0,0,0,0,0,0,0,0,0,0,0,0};
+
+long AryInfoW[16] = {0,
                     PORT_SENSOR_PASS_3,
                     PORT_DETECTION_W,
                     PORT_AIR_W,
-                    0,0,0,0,0,0,0,0,0};
+                    0,0,0,0,0,0,0,0,0,0,0,0};
 
 void InitPort()
 {
@@ -23,6 +25,7 @@ void InitPort()
     digitalWrite(PORT_DEBUG_W, LOW);
     //----------------------------
 
+    //ポート設定----------------------
     pinMode(PORT_DETECTION_PE, INPUT_PULLUP);
     pinMode(PORT_DETECTION_W, INPUT_PULLUP);
 
@@ -37,6 +40,7 @@ void InitPort()
     pinMode(PORT_LED_W, OUTPUT);
     pinMode(PORT_LED_AIR, OUTPUT);
     
+    //ポート状態------------------------
     digitalWrite(PORT_AIR_PE, AIR_OFF);
     digitalWrite(PORT_AIR_W, AIR_OFF);
     digitalWrite(PORT_LED, LED_OFF);

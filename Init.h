@@ -5,24 +5,27 @@ extern bool FlgPE;
 extern bool FlgW;
 extern int DebugCntAAA;
 
-extern long AryStsPE[13];
-extern long AryStsW[13];
+extern long AryInfoPE[16];
+extern long AryInfoW[16];
 
-enum _EnmArySts
+enum _EnmAryInfo
 {
     areaState = 0,
     portNumPass,
     portNumDetection,
     portNumAir,
     cntBuf,
+    flgAirOrderWait,//0 or 1
+    timeWaitStart,
+    timeTargetBuf,
     timePassOn,
-    timePassInterval,
-    timePassIntervalMin,
-    timePassIntervalAvr,
+    timePassSpeed,
+    timePassSpeedMin,
+    timePassSpeedAvr,
     timeAirSignalEnd,
     timeAirInterval,
-    timeIntervalMin,
-    timeIntervalAvr
+    timeAirIntervalMin,
+    timeAirIntervalAvr
 };
 
 enum _StateTransition
@@ -30,6 +33,7 @@ enum _StateTransition
     enm_StsWaitDetection = 0,
     enm_StsWaitAddition,
     enm_StsWaitPassOff,
+    enm_StsWaitAirOrder,
     enm_StsAirSignal
 };
 

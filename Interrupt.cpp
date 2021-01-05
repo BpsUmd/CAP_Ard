@@ -1,25 +1,55 @@
+#include "Def.h"
 #include "Interrupt.h"
 #include "Init.h"
-#include "Def.h"
+#include "Timer.h"
 
 //*********************************************************************************
-void IntDetectionPE()
+//エリア2 CAP通過時の割込み
+//*********************************************************************************
+void Int_DetectionPE()
 {
-    if(AryStsPE[areaState] != enm_StsWaitPassOff) return;
-    OrderAir(AryStsPE);
+    //通過時間を取得
+    AryInfoPE[timePassSpeed] = TimeElapsed(AryInfoPE[timePassOn]);
+    OrderAir(AryInfoPE);
 }
 
 //*********************************************************************************
-void IntDetectionW()
+//エリア3 CAP通過時の割込み
+//*********************************************************************************
+void Int_DetectionW()
 {
-    if(AryStsW[areaState] != enm_StsWaitPassOff) return;
-    OrderAir(AryStsW);
+    //通過時間を取得
+    AryInfoW[timePassSpeed] = TimeElapsed(AryInfoW[timePassOn]);
+    OrderAir(AryInfoW);
 }
 
 //*********************************************************************************
-void OrderAir(long *arySts)
+//*********************************************************************************
+void OrderAir(long *aryInfo)
 {
-    digitalWrite(arySts[portNumAir], HIGH);
-    arySts[areaState] = enm_StsAirSignal;
-    arySts[cntBuf] = 0;
+    //検知信号が無い場合は”通常状態”へ
+    if(AryInfoW[areaState] != enm_StsWaitPassOff)
+        ChangeState(aryInfo, enm_StsWaitDetection)
+    //検知信号を受けている場合は”エア命令発信待ち”へ
+    else
+    {
+        aryInfo[areaState] = enm_StsWaitAirOrder;
+        aryInfo[cntBuf] = 0;
+    }
+    
+    
+}
+
+//*********************************************************************************
+//*********************************************************************************
+void Int_SetPassOnTimePE()
+{
+    GetTime(AryInfoPE[timePassOn]);
+}
+
+//*********************************************************************************
+//*********************************************************************************
+void Int_SetPassOnTimeW()
+{
+    GetTime(AryInfoW[timePassOn]);
 }
