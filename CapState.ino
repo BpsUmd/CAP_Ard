@@ -8,6 +8,7 @@
 #include "Init.h"
 #include "Timer.h"
 #include "Interrupt.h"
+#include "SerialCtrl.h"
 
 //*********************************************************************************
 //*********************************************************************************
@@ -29,9 +30,10 @@ void setup() {
     digitalWrite(PORT_LED_AIR, LED_OFF);
 #else //DEBUG_TIME_SEND
     FlashLED(PORT_LED, 3, 50, LED_OFF);
-    FlashLED(PORT_LED_PE, 3, 50, LED_OFF);
-    FlashLED(PORT_LED_W, 3, 50, LED_OFF);
-    FlashLED(PORT_LED_AIR, 3, 50, LED_OFF);
+    // FlashLED(PORT_LED_PE, 3, 50, LED_OFF);
+    // FlashLED(PORT_LED_W, 3, 50, LED_OFF);
+    // FlashLED(PORT_LED_AIR, 3, 50, LED_OFF);
+
 #endif //DEBUG_TIME_SEND
 
     //割り込み設定
@@ -49,8 +51,9 @@ void loop()
 {
     //CtrlSignal(AryInfoPE, FlgPE, AREA_NUM_PE);
     //CtrlSignal(AryInfoW, FlgW, AREA_NUM_W);
-    CtrlSignal(AryInfoPE);
-    CtrlSignal(AryInfoW);
+    CtrlSignal(AryInfoPE, AryTimeBuf_PE);
+    CtrlSignal(AryInfoW, AryTimeBuf_W);
+    Output_Interval_Count();
 }
 //*********************************************************************************
 //*********************************************************************************
@@ -60,7 +63,7 @@ void loop()
 //*********************************************************************************
 
 //void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
-void CtrlSignal(long *aryInfo)
+void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 {
     long TimeBuf = 0;
     String strAreaName = "";
@@ -70,6 +73,18 @@ void CtrlSignal(long *aryInfo)
         //=============================
         //通常状態
         case enm_StsWaitDetection:
+            if(aryInfo[flgSerialOut] >= 1)
+            {
+                aryInfo[flgSerialOut] = 0;
+                if(aryInfo[portNumPass] == PORT_SENSOR_PASS_2) strAreaName = "PE";
+                else strAreaName = "W";
+                Serial.print(strAreaName);
+                Serial.print(",");
+                Serial.print(aryTimeBuf[timePassInterval]);
+                Serial.print(",");
+                Serial.println(aryTimeBuf[timePassIntervalMin]);
+            }
+            
             //検知信号を受けたら "通過完了割込み待ち" へ
             if(digitalRead(aryInfo[portNumDetection]) == LOW)
                 ChangeState(aryInfo, enm_StsWaitPassOff);
@@ -78,11 +93,11 @@ void CtrlSignal(long *aryInfo)
         //=============================
         //検知を受けた後の待ち時間(通過センサより先に反応したときの為に)
         //※■※PassOFFを割り込み反応にした為、必要なくなった
-        case enm_StsWaitAddition:
-            // if(CheckCnt(aryInfo[cntBuf], CNT_WAIT))
-            //     ChangeState(aryInfo, enm_StsWaitPassOff);
-            ChangeState(aryInfo, enm_StsWaitDetection);
-            break;
+        // case enm_StsWaitAddition:
+        //     // if(CheckCnt(aryInfo[cntBuf], CNT_WAIT))
+        //     //     ChangeState(aryInfo, enm_StsWaitPassOff);
+        //     ChangeState(aryInfo, enm_StsWaitDetection);
+        //     break;
 
         //=============================
         //"通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
@@ -104,14 +119,14 @@ void CtrlSignal(long *aryInfo)
                 if(aryInfo[flgAirOrderWait] == 0)
                 {
                     //wait開始時間をセット
-                    GetTime(aryInfo[timeWaitStart]);
+                    GetTime(aryTimeBuf[timeWaitStart]);
                     //待ち時間をセット
-                    aryInfo[timeTargetBuf] = aryInfo[timePassSpeed] / TIME_DEVIDE;
+                    aryTimeBuf[timeTargetBuf] = aryTimeBuf[timePassSpeed] / TIME_DEVIDE;
                     aryInfo[flgAirOrderWait] = 1;
                 }
                 else
                 {
-                    if(CheckElapsedTime(aryInfo[timeWaitStart], aryInfo[timePassSpeed]))
+                    if(CheckElapsedTime(aryTimeBuf[timeWaitStart], aryTimeBuf[timePassSpeed]))
                     {
                         aryInfo[flgAirOrderWait] = 0;
                         ChangeState(aryInfo, enm_StsAirSignal);
@@ -160,7 +175,7 @@ bool CheckCnt(long& cnt, long endNum)
     }
 }
 
-//*********************************************************************************
+//***************************************************a******************************
 void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 {
     for (int i = 0; i < loopNum; i++)
@@ -171,4 +186,56 @@ void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
         delay(delayTime*10);
     }
     digitalWrite(portNum, blEnd);
+}
+
+//*********************************************************************************
+void Output_Interval_Count()
+{
+    if(ReceiveSerial(Serial))
+    {
+        Serial.println("=====PE=====");
+        Serial.print("Under100ms,");
+        Serial.println(AryIntervalCount_PE[enmUnder100]);
+        Serial.print("101-150ms,");
+        Serial.println(AryIntervalCount_PE[enm101_150]);
+        Serial.print("151-200ms,");
+        Serial.println(AryIntervalCount_PE[enm151_200]);
+        Serial.print("201-250ms,");
+        Serial.println(AryIntervalCount_PE[enm201_250]);
+        Serial.print("251-300ms,");
+        Serial.println(AryIntervalCount_PE[enm251_300]);
+        Serial.print("301-350ms,");
+        Serial.println(AryIntervalCount_PE[enm301_350]);
+        Serial.print("351-400ms,");
+        Serial.println(AryIntervalCount_PE[enm351_400]);
+        Serial.print("401-450ms,");
+        Serial.println(AryIntervalCount_PE[enm401_450]);
+        Serial.print("451-500ms,");
+        Serial.println(AryIntervalCount_PE[enm451_500]);
+        Serial.print("Over501ms,");
+        Serial.println(AryIntervalCount_PE[enmOver501]);
+        Serial.println("");
+        Serial.println("=====White=====");
+        Serial.print("Under100ms,");
+        Serial.println(AryIntervalCount_W[enmUnder100]);
+        Serial.print("101-150ms,");
+        Serial.println(AryIntervalCount_W[enm101_150]);
+        Serial.print("151-200ms,");
+        Serial.println(AryIntervalCount_W[enm151_200]);
+        Serial.print("201-250ms,");
+        Serial.println(AryIntervalCount_W[enm201_250]);
+        Serial.print("251-300ms,");
+        Serial.println(AryIntervalCount_W[enm251_300]);
+        Serial.print("301-350ms,");
+        Serial.println(AryIntervalCount_W[enm301_350]);
+        Serial.print("351-400ms,");
+        Serial.println(AryIntervalCount_W[enm351_400]);
+        Serial.print("401-450ms,");
+        Serial.println(AryIntervalCount_W[enm401_450]);
+        Serial.print("451-500ms,");
+        Serial.println(AryIntervalCount_W[enm451_500]);
+        Serial.print("Over501ms,");
+        Serial.println(AryIntervalCount_W[enmOver501]);
+
+    }
 }
