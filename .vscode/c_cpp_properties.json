@@ -12,7 +12,8 @@
                 "C:\\Program Files (x86)\\Arduino\\hardware\\tools\\**",
                 "C:\\Program Files (x86)\\Arduino\\libraries\\**",
                 "C:\\Users\\bpss-\\Documents\\Arduino\\libraries\\**",
-                "C:\\Program Files (x86)\\Arduino\\tools\\**"
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Users\\sny-acer\\sketchbook\\libraries\\**"
             ],
             "forcedInclude": [
                 "/home/umd/arduino-1.8.13/hardware/arduino/avr/cores/arduino/Arduino.h",

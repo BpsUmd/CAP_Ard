@@ -16,7 +16,7 @@ enum _EnmAryInfo
     portNumDetection,
     portNumAir,
     cntBuf,
-    flgAirOrderWait,//0 or 1
+    flgAirOrderWaitStart,//Air命令waitを開始しているか
     flgSerialOut,
     flgPassFirstTime
 };
@@ -62,11 +62,10 @@ enum _IntervalCount
 //=============================
 enum _StateTransition
 {
-    enm_StsWaitDetection = 0,
-    //enm_StsWaitAddition,
-    enm_StsWaitPassOff,
-    enm_StsWaitAirOrder,
-    enm_StsAirSignal
+    enm_Sts0_WaitDetection = 0,
+    enm_Sts1_WaitPassOff,
+    enm_Sts2_WaitAirOrder,
+    enm_Sts3_AirSignal
 };
 
 

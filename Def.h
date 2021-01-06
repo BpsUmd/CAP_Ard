@@ -1,5 +1,6 @@
 //#define DEBUG_TIME_SEND
 #define SERIAL_SEND
+#define DEBUG_SERIAL_OUT
 
 
 //論理-----------------------
@@ -38,7 +39,7 @@
 #define AREA_NUM_W 3
 
 #define TIME_MAX_VALUE 4294967295
-#define TIME_DEVIDE 25
+#define TIME_DEVIDE 0
 
 //デバッグ用--------------------------
 #define CNT_DEBUG 100000
