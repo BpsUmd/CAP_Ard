@@ -1,4 +1,5 @@
 #include "Timer.h"
+#include "Init.h"
 #include "Def.h"
 
 //*********************************************************************************
@@ -23,18 +24,25 @@ long TimeElapsed(long startTime)
 }
 
 //*********************************************************************************
-bool CheckElapsedTime(long startTime, long targetTime)
+bool CheckElapsedTime(long start_time, long wait_time)
 {
     long nowTime = millis();
     long resultTime;
 
-    if(startTime > nowTime)
-        resultTime = nowTime + (TIME_MAX_VALUE - startTime);
+    if(start_time > nowTime)
+        resultTime = nowTime + (TIME_MAX_VALUE - start_time);
     else
-        resultTime = nowTime - startTime;
+        resultTime = nowTime - start_time;
     
-    if(resultTime >= targetTime)
+    if(resultTime >= wait_time)
         return true;
     else
         return false;
+}
+
+//*********************************************************************************
+void SettingTime(long *ary_time_buf, long set_wait_time)
+{
+    ary_time_buf[timeStart] = millis();
+    ary_time_buf[timeWait] = set_wait_time;
 }
