@@ -138,6 +138,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                         aryInfo[areaState] == enm_Sts2_WaitAirOrder)
             {
                 ChangeState(aryInfo, enm_Sts3_AirSignal);
+                digitalWrite(aryInfo[portNumAir], HIGH);
 #ifdef DEBUG_SERIAL_OUT
                 Serial.print("-----");
                 Serial.print(strAreaName);
@@ -169,13 +170,13 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                     {
                         aryInfo[flgAirOrderWaitStart] = 0;
                         ChangeState(aryInfo, enm_Sts3_AirSignal);
+                        digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
                         
 #ifdef DEBUG_SERIAL_OUT
                         Serial.print("-----");
                         Serial.print(strAreaName);
                         Serial.println(" State 3 Air signal-----");
 #endif
-                        digitalWrite(aryInfo[portNumAir], HIGH);
                     }
                 }
             }
@@ -188,7 +189,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 #pragma region エア命令信号発信-------------------------------
             if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
             {
-                digitalWrite(aryInfo[portNumAir], LOW);
+                digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
 #ifdef DEBUG_SERIAL_OUT
                 Serial.print("-----");

@@ -1,6 +1,7 @@
 //#define DEBUG_TIME_SEND
 #define SERIAL_SEND
 #define DEBUG_SERIAL_OUT
+#define DEBUG_SIGNAL
 
 
 //論理-----------------------
@@ -9,6 +10,9 @@
 
 #define AIR_ON 0
 #define AIR_OFF 1
+
+#define AIR_SIGNAL_ON 1
+#define AIR_SIGNAL_OFF 0
 
 //Port番号-----------------------
 #define PORT_SENSOR_PASS_2 2//割込み
@@ -30,7 +34,9 @@
 #define INT_NUM_AREA3 1
 
 //カウント閾------------------------
-#define CNT_AIR_SIGNAL 1000
+// #define CNT_AIR_SIGNAL 1000
+#define CNT_AIR_SIGNAL 5000
+
 #define CNT_FLG_CANCEL 62000
 #define CNT_WAIT 5000
 
