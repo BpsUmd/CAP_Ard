@@ -26,7 +26,7 @@ void Int_SetPassOnTimeW()
 //*********************************************************************************
 void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
 {
-    long Time_Buf = aryTimeBuf[timePassInterval];
+    //////long Time_Buf = aryTimeBuf[timePassInterval];
     
     //前回のON時間から通過間隔をセット
     aryTimeBuf[timePassInterval] = TimeElapsed(aryTimeBuf[timePassOn]);
@@ -41,7 +41,7 @@ void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
 //*********************************************************************************
 void IntervalCount(long *aryIntervalCount, long interval_time)
 {
-    if(100 <= interval_time)
+    if(100 >= interval_time)
         aryIntervalCount[enmUnder100]++;
     if(100 < interval_time && 150 >= interval_time)
         aryIntervalCount[enm101_150]++;
@@ -59,7 +59,7 @@ void IntervalCount(long *aryIntervalCount, long interval_time)
         aryIntervalCount[enm401_450]++;
     if(450 < interval_time && 500 >= interval_time)
         aryIntervalCount[enm451_500]++;
-    if(500 > interval_time)
+    if(500 < interval_time)
         aryIntervalCount[enmOver501]++;
 }
 
@@ -93,18 +93,19 @@ void OrderAir(long *aryInfo, long *aryTimeBuf, long *aryIntervalCount)
 
     //==============信号処理==============
     //検知信号が無い場合は”通常状態”へ
-    if(AryInfoW[areaState] != enm_StsWaitPassOff)
-        AryInfoW[areaState] = enm_StsWaitDetection;
+    if(AryInfoW[areaState] != enm_Sts1_WaitPassOff)
+        AryInfoW[areaState] = enm_Sts0_WaitDetection;
     //検知信号を受けている場合は”エア命令発信待ち”へ
     else
-        aryInfo[areaState] = enm_StsWaitAirOrder;
+        aryInfo[areaState] = enm_Sts2_WaitAirOrder;
     
     //インターバル時間をカウント
     IntervalCount(aryIntervalCount, aryTimeBuf[timePassInterval]);
+
     //カウンタをリセット
     aryInfo[cntBuf] = 0;
     //初回フラグをリセット
-    if(AryInfoW[flgPassFirstTime] < 1)
+    if(AryInfoW[flgPassFirstTime] >= 1)
         AryInfoW[flgPassFirstTime] = 0;
         
     //キャップ間隔情報を出力するフラグをセット
