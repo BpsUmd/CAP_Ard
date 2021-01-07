@@ -21,15 +21,15 @@
 
 #define TIME_MAX_VALUE 4294967295
 
-#define PASS1_DETECT1_TIME 50
+#define PASS1_DETECT1_TIME 100
 #define PASS0_DETECT1_TIME1 50
 #define PASS0_DETECT0_TIME 50
 #define PASS0_DETECT1_TIME2 100
 
-//__            __            __
-//  |__________|  |__________|
-//_____    ___________    __________
-//     |__|           |__|
-//   50 50  100 50
+//__            ____            __
+//  |__________|    |__________|
+//_____    _____________    __________
+//     |__|             |__|
+//   50 50  100  100
 
 #define DELAY_PASS_W 500

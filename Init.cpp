@@ -8,8 +8,22 @@ long AryInfoW[3] = {0,
                     PORT_SENSOR_PASS_3,
                     PORT_DETECTION_W};
 
+// enum _EnmAryInfo
+// {
+//     areaState = 0,
+//     portNumPass,
+//     portNumDetection,
+// };
+
+
 long AryTimeBuf_PE[2] = {0,PASS1_DETECT1_TIME};
 long AryTimeBuf_W[2] = {0,PASS1_DETECT1_TIME};
+
+// enum _TimeBuf
+// {
+//     timeStart,
+//     timeWait
+// };
 
 void InitPort()
 {

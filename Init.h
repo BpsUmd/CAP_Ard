@@ -32,5 +32,5 @@ enum _StateTransition
     enm_Sts3_PassL_DetectH
 };
 
-
+//=============================
 void InitPort();
