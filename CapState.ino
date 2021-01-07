@@ -114,6 +114,13 @@ void ChangeState(long *ary_info, long *ary_time_buf, long target_state, long set
 
 }
 
+//*********************************************************************************
+void SettingTime(long *ary_time_buf, long set_wait_time)
+{
+    ary_time_buf[timeStart] = millis();
+    ary_time_buf[timeWait] = set_wait_time;
+}
+
 //***************************************************a******************************
 void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 {

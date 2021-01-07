@@ -40,9 +40,4 @@ bool CheckElapsedTime(long start_time, long wait_time)
         return false;
 }
 
-//*********************************************************************************
-void SettingTime(long *ary_time_buf, long set_wait_time)
-{
-    ary_time_buf[timeStart] = millis();
-    ary_time_buf[timeWait] = set_wait_time;
-}
+
