@@ -40,26 +40,24 @@ void SignalCtrl(long *ary_info, long *ary_time_buf)
 {
     switch(ary_info[areaState])
     {
-        case enm_Sts0_PassH_DetectH:
+        case enm_Sts0_Pass1_Detect1:
             if(CheckElapsedTime(ary_time_buf[timeStart], ary_time_buf[timeWait]))
-                ChangeState(ary_info, ary_time_buf, enm_Sts11_PassL_DetectH, PASS0_DETECT1_TIME1);
+                ChangeState(ary_info, ary_time_buf, enm_Sts1_Pass1_Detect0, PASS1_DETECT0_TIME);
             break;
-        case enm_Sts11_PassL_DetectH:
+        case enm_Sts1_Pass1_Detect0:
             if(CheckElapsedTime(ary_time_buf[timeStart], ary_time_buf[timeWait]))
-                ChangeState(ary_info, ary_time_buf, enm_Sts2_PassL_DetectL, PASS0_DETECT0_TIME);
+                ChangeState(ary_info, ary_time_buf, enm_Sts2_Pass0_Detect1, PASS0_DETECT0_TIME);
             break;
-        case enm_Sts12_PassH_DetectL:
-            break;
-        case enm_Sts2_PassL_DetectL:
+        case enm_Sts2_Pass0_Detect1:
             if(CheckElapsedTime(ary_time_buf[timeStart], ary_time_buf[timeWait]))
-                ChangeState(ary_info, ary_time_buf, enm_Sts3_PassL_DetectH, PASS0_DETECT1_TIME2);
+                ChangeState(ary_info, ary_time_buf, enm_Sts3_Pass0_Detect1, PASS0_DETECT1_TIME);
             break;
-        case enm_Sts3_PassL_DetectH:
+        case enm_Sts3_Pass0_Detect1:
             // if(CheckElapsedTime(ary_info[timeStart], ary_time_buf[timeWait]))
             //     ChangeState(ary_info, enm_Sts0_PassH_DetectH, PASS1_DETECT1_TIME);
             if(CheckElapsedTime(ary_time_buf[timeStart], ary_time_buf[timeWait]))
             {
-                ChangeState(ary_info, ary_time_buf, enm_Sts0_PassH_DetectH, PASS1_DETECT1_TIME);
+                ChangeState(ary_info, ary_time_buf, enm_Sts0_Pass1_Detect1, PASS1_DETECT1_TIME);
                 if(ary_info[portNumDetection] == PORT_DETECTION_W)
                     ary_time_buf[timeWait] += DELAY_PASS_W;
             }
@@ -72,32 +70,26 @@ void ChangeState(long *ary_info, long *ary_time_buf, long target_state, long set
 {
     switch (target_state)
     {
-        case enm_Sts0_PassH_DetectH:
-            ary_info[areaState] = enm_Sts0_PassH_DetectH;
+        case enm_Sts0_Pass1_Detect1:
+            ary_info[areaState] = enm_Sts0_Pass1_Detect1;
             digitalWrite(ary_info[portNumPass], HIGH);
             digitalWrite(ary_info[portNumDetection], HIGH);
             digitalWrite(PORT_LED, LED_OFF);
             break;
-        case enm_Sts11_PassL_DetectH:
-            ary_info[areaState] = enm_Sts11_PassL_DetectH;
+        case enm_Sts1_Pass1_Detect0:
+            ary_info[areaState] = enm_Sts1_Pass1_Detect0;
+            digitalWrite(ary_info[portNumPass], HIGH);
+            digitalWrite(ary_info[portNumDetection], LOW);
+            digitalWrite(PORT_LED, LED_ON);
+            break;
+        case enm_Sts2_Pass0_Detect1:
+            ary_info[areaState] = enm_Sts2_Pass0_Detect1;
             digitalWrite(ary_info[portNumPass], LOW);
             digitalWrite(ary_info[portNumDetection], HIGH);
             digitalWrite(PORT_LED, LED_ON);
             break;
-        case enm_Sts12_PassH_DetectL:
-            ary_info[areaState] = enm_Sts12_PassH_DetectL;
-            digitalWrite(ary_info[portNumPass], HIGH);
-            digitalWrite(ary_info[portNumDetection], LOW);
-            digitalWrite(PORT_LED, LED_OFF);
-            break;
-        case enm_Sts2_PassL_DetectL:
-            ary_info[areaState] = enm_Sts2_PassL_DetectL;
-            digitalWrite(ary_info[portNumPass], LOW);
-            digitalWrite(ary_info[portNumDetection], LOW);
-            digitalWrite(PORT_LED, LED_ON);
-            break;
-        case enm_Sts3_PassL_DetectH:
-            ary_info[areaState] = enm_Sts3_PassL_DetectH;
+        case enm_Sts3_Pass0_Detect1:
+            ary_info[areaState] = enm_Sts3_Pass0_Detect1;
             digitalWrite(ary_info[portNumPass], LOW);
             digitalWrite(ary_info[portNumDetection], HIGH);
             digitalWrite(PORT_LED, LED_ON);

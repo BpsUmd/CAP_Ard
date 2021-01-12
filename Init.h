@@ -25,11 +25,10 @@ enum _TimeBuf
 //=============================
 enum _StateTransition
 {
-    enm_Sts0_PassH_DetectH = 0,
-    enm_Sts11_PassL_DetectH,
-    enm_Sts12_PassH_DetectL,
-    enm_Sts2_PassL_DetectL,
-    enm_Sts3_PassL_DetectH
+    enm_Sts0_Pass1_Detect1 = 0,
+    enm_Sts1_Pass1_Detect0,
+    enm_Sts2_Pass0_Detect1,
+    enm_Sts3_Pass0_Detect1
 };
 
 //=============================
