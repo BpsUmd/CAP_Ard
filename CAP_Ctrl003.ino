@@ -23,7 +23,7 @@
 #define PORT_AIR_PE 6
 #define PORT_AIR_W 7
 
-#define CNT_END_NUM 1000
+#define CNT_END_NUM 3000
 #define CNT_FLG_CANCEL 62000
 #define CNT_WAIT 5000
 
