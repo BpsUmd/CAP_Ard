@@ -2,7 +2,7 @@
 #include "Def.h"
 
 //*********************************************************************************
-long GetTime(long *valTime)
+void GetTime(long& valTime)
 {
     valTime = millis();
 }

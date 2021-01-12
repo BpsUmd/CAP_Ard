@@ -1,5 +1,5 @@
 #include <Arduino.h>
 
 long TimeElapsed(long start_time);
-long GetTime(long *valTime);
+void GetTime(long& valTime);
 bool CheckElapsedTime(long startTime, long targetTime);
