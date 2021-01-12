@@ -63,25 +63,54 @@ void IntervalCount(long *aryIntervalCount, long interval_time)
         aryIntervalCount[enmOver501]++;
 }
 
-//=======================================================================================
-//=======================================================================================
-//*********************************************************************************
-//エリア2 CAP通過終了時の割込み
-//*********************************************************************************
-void Int_PassOff_PE()
+
+void Int_DetIn_PE()
 {
-    OrderAir(AryInfoPE, AryTimeBuf_PE, AryIntervalCount_PE);
+    OrderAir(AryInfoPE, AryTimeBuf_PE);
+}
+void Int_DetIn_W()
+{
+    OrderAir(AryInfoW, AryTimeBuf_W);
 }
 
+
+
 //*********************************************************************************
-//エリア3 CAP通過終了時の割込み
-//*********************************************************************************
-void Int_PassOff_W()
+void OrderAir(long *aryInfo, long *aryTimeBuf)
 {
-    //通過時間を取得
-    // AryTimeBuf_W[timePassSpeed] = TimeElapsed(AryTimeBuf_W[timePassOn]);
-    OrderAir(AryInfoW, AryTimeBuf_W, AryIntervalCount_W);
+    if(aryInfo[areaState] == enm_Sts0_WaitDetection)
+    {
+        aryInfo[areaState] = enm_Sts1_Wait;
+        GetTime(aryTimeBuf[timeWaitStart]);
+    }
 }
+
+
+
+
+
+
+
+
+// //=======================================================================================
+// //=======================================================================================
+// //*********************************************************************************
+// //エリア2 CAP通過終了時の割込み
+// //*********************************************************************************
+// void Int_PassOff_PE()
+// {
+//     OrderAir(AryInfoPE, AryTimeBuf_PE, AryIntervalCount_PE);
+// }
+
+// //*********************************************************************************
+// //エリア3 CAP通過終了時の割込み
+// //*********************************************************************************
+// void Int_PassOff_W()
+// {
+//     //通過時間を取得
+//     // AryTimeBuf_W[timePassSpeed] = TimeElapsed(AryTimeBuf_W[timePassOn]);
+//     OrderAir(AryInfoW, AryTimeBuf_W, AryIntervalCount_W);
+// }
 
 //*********************************************************************************
 //*********************************************************************************
@@ -93,9 +122,9 @@ void OrderAir(long *aryInfo, long *aryTimeBuf, long *aryIntervalCount)
 
     //==============信号処理==============
     //検知信号が無い場合は”通常状態”へ
-    if(aryInfo[areaState] == enm_Sts1_WaitPassOff)
+    if(aryInfo[areaState] == enm_Sts2_WaitPassOff)
     {
-        aryInfo[areaState] = enm_Sts2_AirSignal;
+        aryInfo[areaState] = enm_Sts3_AirSignal;
         digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
     }
     //インターバル時間をカウント

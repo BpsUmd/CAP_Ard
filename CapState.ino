@@ -37,10 +37,10 @@ void setup() {
 #endif //DEBUG_TIME_SEND
 
     //割り込み設定
-    attachInterrupt(INT_NUM_AREA2, Int_PassOff_PE, RISING);
+    attachInterrupt(INT_NUM_AREA2, Int_DetIn_PE, FALLING);
     // attachInterrupt(INT_NUM_AREA2, Int_SetPassOnTimePE, FALLING);
 
-    attachInterrupt(INT_NUM_AREA3, Int_PassOff_W, RISING);
+    attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);
     // attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimePE, FALLING);
 
     Serial.println("-----Start-----");
@@ -81,28 +81,31 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         case enm_Sts0_WaitDetection:
 #pragma region 通常状態---------------------------
 
-            //検知信号を受けたら "通過完了割込み待ち" へ
-            if(digitalRead(aryInfo[portNumDetection]) == LOW  && 
-                        aryInfo[areaState] == enm_Sts0_WaitDetection)
-            {
-                ChangeState(aryInfo, enm_Sts1_WaitPassOff);
-#ifdef DEBUG_SERIAL_OUT
-                Serial.print("-----");
-                Serial.print(strAreaName);
-                Serial.println(" State 1 Wait pass off-----");
-#endif
-            }
             break;
 #pragma endregion
+
+        //待ち時間　通過より検知が先になった時の対策
+        case enm_Sts1_Wait:
+            if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
+            {
+                ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+            }
+            break;
 
         //=======================================================================================
         //1 "通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
         //※■※指定時間経っても割込が無い時は通常状態に戻す
-        case enm_Sts1_WaitPassOff:
-#pragma region 通過完了割込み待ち---------------------------
+        case enm_Sts2_WaitPassOff:
+#pragma region 通過完了待ち---------------------------
+            if(digitalRead(aryInfo[portNumPass]) == HIGH)
+            {
+                digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
+                GetTime(aryTimeBuf[timePassOn]);
+                ChangeState(aryInfo, enm_Sts3_AirSignal);
+            }
             //一定時間、割込みが無い場合は通常状態へ
-            if(CheckCnt(aryInfo[cntBuf], CNT_FLG_CANCEL) && 
-                        aryInfo[areaState] == enm_Sts1_WaitPassOff)
+            else if(CheckCnt(aryInfo[cntBuf], CNT_FLG_CANCEL) && 
+                        aryInfo[areaState] == enm_Sts2_WaitPassOff)
             {
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
             }
@@ -112,9 +115,10 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 
         //=======================================================================================
         //エア命令ON時間
-        case enm_Sts2_AirSignal:
+        case enm_Sts3_AirSignal:
 #pragma region エア命令信号発信-------------------------------
-            if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts2_AirSignal)
+            // if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
+            if(CheckElapsedTime(aryTimeBuf[timePassOn], TIME_AIR_SIGNAL_ON))
             {
                 digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);

@@ -15,11 +15,11 @@
 #define AIR_SIGNAL_OFF 0
 
 //Port番号-----------------------
-#define PORT_SENSOR_PASS_2 2//割込み
-#define PORT_SENSOR_PASS_3 3//割込み
+#define PORT_SENSOR_PASS_2 4
+#define PORT_SENSOR_PASS_3 5
 
-#define PORT_DETECTION_PE 4
-#define PORT_DETECTION_W 5
+#define PORT_DETECTION_PE 2//割込み
+#define PORT_DETECTION_W 3//割込み
 
 #define PORT_AIR_PE 6
 #define PORT_AIR_W 7
@@ -32,6 +32,10 @@
 //割込み番号------------------------
 #define INT_NUM_AREA2 0
 #define INT_NUM_AREA3 1
+
+//時間
+#define TIME_WAIT 50
+#define TIME_AIR_SIGNAL_ON 50
 
 //カウント閾------------------------
 // #define CNT_AIR_SIGNAL 1000
