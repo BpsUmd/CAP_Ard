@@ -88,6 +88,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         case enm_Sts1_Wait:
             if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
             {
+                GetTime(aryTimeBuf[timeWaitPassStart]);
                 ChangeState(aryInfo, enm_Sts2_WaitPassOff);
             }
             break;
@@ -104,7 +105,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 ChangeState(aryInfo, enm_Sts3_AirSignal);
             }
             //一定時間、割込みが無い場合は通常状態へ
-            else if(CheckCnt(aryInfo[cntBuf], CNT_FLG_CANCEL) && 
+            else if(CheckElapsedTime(aryTimeBuf[timeWaitPassStart], TIME_CANCEL) && 
                         aryInfo[areaState] == enm_Sts2_WaitPassOff)
             {
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
