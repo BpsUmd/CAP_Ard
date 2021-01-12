@@ -23,7 +23,7 @@ void setup() {
     digitalWrite(PORT_LED_PE, LED_ON);
     digitalWrite(PORT_LED_W, LED_ON);
     digitalWrite(PORT_LED_AIR, LED_ON);
-    delay(1000);
+    delay(500);
     digitalWrite(PORT_LED, LED_OFF);
     digitalWrite(PORT_LED_PE, LED_OFF);
     digitalWrite(PORT_LED_W, LED_OFF);
@@ -37,18 +37,18 @@ void setup() {
 #endif //DEBUG_TIME_SEND
 
     //割り込み設定
-    attachInterrupt(INT_NUM_AREA2, Int_SetPassOnTimePE, FALLING);
-    attachInterrupt(INT_NUM_AREA2, Int_DetectionPE, RISING);
+    attachInterrupt(INT_NUM_AREA2, Int_PassOff_PE, RISING);
+    // attachInterrupt(INT_NUM_AREA2, Int_SetPassOnTimePE, FALLING);
 
-    attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimeW, FALLING);
-    attachInterrupt(INT_NUM_AREA3, Int_DetectionW, RISING);
+    attachInterrupt(INT_NUM_AREA3, Int_PassOff_W, RISING);
+    // attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimePE, FALLING);
 
     Serial.println("-----Start-----");
 
-#ifdef DEBUG_SERIAL_OUT
-    Serial.println("-----PE State 0 Wait detection-----");
-    Serial.println("-----W State 0 Wait detection-----");
-#endif
+// #ifdef DEBUG_SERIAL_OUT
+//     Serial.println("-----PE State 0 Wait detection-----");
+//     Serial.println("-----W State 0 Wait detection-----");
+// #endif
 }
 
 //*********************************************************************************
@@ -58,7 +58,7 @@ void loop()
     //CtrlSignal(AryInfoW, FlgW, AREA_NUM_W);
     CtrlSignal(AryInfoPE, AryTimeBuf_PE);
     CtrlSignal(AryInfoW, AryTimeBuf_W);
-    Output_Interval_Count();
+    //Output_Interval_Count();
 }
 //*********************************************************************************
 //*********************************************************************************
@@ -71,10 +71,6 @@ void loop()
 void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 {
     long TimeBuf = 0;
-    String strAreaName = "";
-
-    if(aryInfo[portNumPass] == PORT_SENSOR_PASS_2) strAreaName = "PE";
-    else strAreaName = "W";
 
 //===========================================================
 //===========================================================
@@ -85,17 +81,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         case enm_Sts0_WaitDetection:
 #pragma region 通常状態---------------------------
 
-#ifdef SERIAL_SEND
-            if(aryInfo[flgSerialOut] >= 1)
-            {
-                aryInfo[flgSerialOut] = 0;
-                Serial.print(strAreaName);
-                Serial.print(",");
-                Serial.print(aryTimeBuf[timePassInterval]);
-                Serial.print(",");
-                Serial.println(aryTimeBuf[timePassIntervalMin]);
-            }
-#endif
             //検知信号を受けたら "通過完了割込み待ち" へ
             if(digitalRead(aryInfo[portNumDetection]) == LOW  && 
                         aryInfo[areaState] == enm_Sts0_WaitDetection)
@@ -120,74 +105,16 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                         aryInfo[areaState] == enm_Sts1_WaitPassOff)
             {
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
-#ifdef DEBUG_SERIAL_OUT
-                Serial.print("-----");
-                Serial.print(strAreaName);
-                Serial.println(" State 0 Wait detection-----");
-#endif
             }
             break;
 #pragma endregion
 
-        //=======================================================================================
-        //2 エア命令発信遅延 
-        case enm_Sts2_WaitAirOrder:
-#pragma region エア命令発信遅延-------------------------------
-            //TIME_DEVIDE(Def.h)が0の場合は遅延無し
-            if(TIME_DEVIDE == 0 && 
-                        aryInfo[areaState] == enm_Sts2_WaitAirOrder)
-            {
-                ChangeState(aryInfo, enm_Sts3_AirSignal);
-                digitalWrite(aryInfo[portNumAir], HIGH);
-#ifdef DEBUG_SERIAL_OUT
-                Serial.print("-----");
-                Serial.print(strAreaName);
-                Serial.println(" State 3 Air signal-----");
-#endif
-            }
-            else
-            {
-                //この状態でのループ初回はwait開始時間とwait時間をセット
-                if(aryInfo[flgAirOrderWaitStart] == 0)
-                {
-                    
-#ifdef DEBUG_SERIAL_OUT
-                    Serial.print("-----");
-                    Serial.print(strAreaName);
-                    Serial.println(" State 2 Wait air signal-----");
-#endif
-                    //wait開始時間をセット
-                    GetTime(aryTimeBuf[timeWaitStart]);
-                    //待ち時間をセット
-                    aryTimeBuf[timeTargetBuf] = aryTimeBuf[timePassSpeed] / TIME_DEVIDE;
-                    //Air命令信号waitの開始フラグをセット
-                    aryInfo[flgAirOrderWaitStart] = 1;
-                }
-                else
-                {
-                    //この状態でのループ2回目
-                    if(CheckElapsedTime(aryTimeBuf[timeWaitStart], aryTimeBuf[timeTargetBuf]) && aryInfo[areaState] == enm_Sts2_WaitAirOrder)
-                    {
-                        aryInfo[flgAirOrderWaitStart] = 0;
-                        ChangeState(aryInfo, enm_Sts3_AirSignal);
-                        digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
-                        
-#ifdef DEBUG_SERIAL_OUT
-                        Serial.print("-----");
-                        Serial.print(strAreaName);
-                        Serial.println(" State 3 Air signal-----");
-#endif
-                    }
-                }
-            }
-            break;
-#pragma endregion
 
         //=======================================================================================
         //エア命令ON時間
-        case enm_Sts3_AirSignal:
+        case enm_Sts2_AirSignal:
 #pragma region エア命令信号発信-------------------------------
-            if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
+            if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts2_AirSignal)
             {
                 digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
@@ -200,10 +127,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             break;
 #pragma endregion
 
-        //=======================================================================================
-        default:
-            ChangeState(aryInfo, enm_Sts0_WaitDetection);
-            break;
     }
 }
 

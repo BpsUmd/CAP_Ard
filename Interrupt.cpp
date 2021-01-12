@@ -68,7 +68,7 @@ void IntervalCount(long *aryIntervalCount, long interval_time)
 //*********************************************************************************
 //エリア2 CAP通過終了時の割込み
 //*********************************************************************************
-void Int_DetectionPE()
+void Int_PassOff_PE()
 {
     OrderAir(AryInfoPE, AryTimeBuf_PE, AryIntervalCount_PE);
 }
@@ -76,7 +76,7 @@ void Int_DetectionPE()
 //*********************************************************************************
 //エリア3 CAP通過終了時の割込み
 //*********************************************************************************
-void Int_DetectionW()
+void Int_PassOff_W()
 {
     //通過時間を取得
     // AryTimeBuf_W[timePassSpeed] = TimeElapsed(AryTimeBuf_W[timePassOn]);
@@ -89,25 +89,18 @@ void OrderAir(long *aryInfo, long *aryTimeBuf, long *aryIntervalCount)
 {
     //==============時間処理==============
     //通過時間を取得
-    aryTimeBuf[timePassSpeed] = TimeElapsed(aryTimeBuf[timePassOn]);
+    //aryTimeBuf[timePassSpeed] = TimeElapsed(aryTimeBuf[timePassOn]);
 
     //==============信号処理==============
     //検知信号が無い場合は”通常状態”へ
-    if(AryInfoW[areaState] != enm_Sts1_WaitPassOff)
-        AryInfoW[areaState] = enm_Sts0_WaitDetection;
-    //検知信号を受けている場合は”エア命令発信待ち”へ
-    else
-        aryInfo[areaState] = enm_Sts2_WaitAirOrder;
-    
+    if(aryInfo[areaState] == enm_Sts1_WaitPassOff)
+    {
+        aryInfo[areaState] = enm_Sts2_AirSignal;
+        digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
+    }
     //インターバル時間をカウント
-    IntervalCount(aryIntervalCount, aryTimeBuf[timePassInterval]);
+    //IntervalCount(aryIntervalCount, aryTimeBuf[timePassInterval]);
 
     //カウンタをリセット
     aryInfo[cntBuf] = 0;
-    //初回フラグをリセット
-    if(AryInfoW[flgPassFirstTime] >= 1)
-        AryInfoW[flgPassFirstTime] = 0;
-        
-    //キャップ間隔情報を出力するフラグをセット
-    aryInfo[flgSerialOut] = 1;
 }

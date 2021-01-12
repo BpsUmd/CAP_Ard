@@ -1,7 +1,7 @@
 //#define DEBUG_TIME_SEND
-#define SERIAL_SEND
-#define DEBUG_SERIAL_OUT
-#define DEBUG_SIGNAL
+//#define SERIAL_SEND
+//#define DEBUG_SERIAL_OUT
+//#define DEBUG_SIGNAL
 
 
 //論理-----------------------

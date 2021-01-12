@@ -64,8 +64,7 @@ enum _StateTransition
 {
     enm_Sts0_WaitDetection = 0,
     enm_Sts1_WaitPassOff,
-    enm_Sts2_WaitAirOrder,
-    enm_Sts3_AirSignal
+    enm_Sts2_AirSignal
 };
 
 
