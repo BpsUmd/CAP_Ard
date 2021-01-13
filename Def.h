@@ -11,8 +11,10 @@
 #define AIR_ON 0
 #define AIR_OFF 1
 
-#define AIR_SIGNAL_ON 1
-#define AIR_SIGNAL_OFF 0
+// #define AIR_SIGNAL_ON 1
+// #define AIR_SIGNAL_OFF 0
+
+#define PASS_OFF 1
 
 //Port番号-----------------------
 #define PORT_SENSOR_PASS_2 4
@@ -37,6 +39,7 @@
 #define TIME_WAIT 30
 #define TIME_AIR_SIGNAL_ON 50
 #define TIME_CANCEL 1000
+#define TIME_CANCEL_NEXT_DTCT 150
 
 //カウント閾------------------------
 // #define CNT_AIR_SIGNAL 1000

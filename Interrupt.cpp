@@ -5,24 +5,6 @@
 
 
 //*********************************************************************************
-//エリア2 通過開始割込み
-//*********************************************************************************
-void Int_SetPassOnTimePE()
-{
-    SetTimeIntervalBuf(AryInfoPE, AryTimeBuf_PE);
-    // GetTime(AryTimeBuf_PE[timePassOn]);
-}
-
-//*********************************************************************************
-//エリア3 通過開始割込み
-//*********************************************************************************
-void Int_SetPassOnTimeW()
-{
-    SetTimeIntervalBuf(AryInfoW, AryTimeBuf_W);
-    // GetTime(AryTimeBuf_W[timePassOn]);
-}
-
-//*********************************************************************************
 //*********************************************************************************
 void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
 {
@@ -64,16 +46,17 @@ void IntervalCount(long *aryIntervalCount, long interval_time)
 }
 
 
+//*********************************************************************************
 void Int_DetIn_PE()
 {
     OrderAir(AryInfoPE, AryTimeBuf_PE);
 }
+
+//*********************************************************************************
 void Int_DetIn_W()
 {
     OrderAir(AryInfoW, AryTimeBuf_W);
 }
-
-
 
 //*********************************************************************************
 void OrderAir(long *aryInfo, long *aryTimeBuf)
@@ -83,53 +66,4 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
         aryInfo[areaState] = enm_Sts1_Wait;
         GetTime(aryTimeBuf[timeWaitStart]);
     }
-}
-
-
-
-
-
-
-
-
-// //=======================================================================================
-// //=======================================================================================
-// //*********************************************************************************
-// //エリア2 CAP通過終了時の割込み
-// //*********************************************************************************
-// void Int_PassOff_PE()
-// {
-//     OrderAir(AryInfoPE, AryTimeBuf_PE, AryIntervalCount_PE);
-// }
-
-// //*********************************************************************************
-// //エリア3 CAP通過終了時の割込み
-// //*********************************************************************************
-// void Int_PassOff_W()
-// {
-//     //通過時間を取得
-//     // AryTimeBuf_W[timePassSpeed] = TimeElapsed(AryTimeBuf_W[timePassOn]);
-//     OrderAir(AryInfoW, AryTimeBuf_W, AryIntervalCount_W);
-// }
-
-//*********************************************************************************
-//*********************************************************************************
-void OrderAir(long *aryInfo, long *aryTimeBuf, long *aryIntervalCount)
-{
-    //==============時間処理==============
-    //通過時間を取得
-    //aryTimeBuf[timePassSpeed] = TimeElapsed(aryTimeBuf[timePassOn]);
-
-    //==============信号処理==============
-    //検知信号が無い場合は”通常状態”へ
-    if(aryInfo[areaState] == enm_Sts2_WaitPassOff)
-    {
-        aryInfo[areaState] = enm_Sts3_AirSignal;
-        digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
-    }
-    //インターバル時間をカウント
-    //IntervalCount(aryIntervalCount, aryTimeBuf[timePassInterval]);
-
-    //カウンタをリセット
-    aryInfo[cntBuf] = 0;
 }

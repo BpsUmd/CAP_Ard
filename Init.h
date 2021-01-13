@@ -22,14 +22,15 @@ enum _EnmAryInfo
 };
 
 //=============================
-extern long AryTimeBuf_PE[8];
-extern long AryTimeBuf_W[8];
+extern long AryTimeBuf_PE[9];
+extern long AryTimeBuf_W[9];
 
 enum _TimeBuf
 {
     timeWaitStart = 0,
     timeTargetBuf,
     timePassOn,
+    timePassEnd,
     timeWaitPassStart,
     timePassSpeed,
     timePassSpeedMin,

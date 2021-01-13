@@ -98,10 +98,10 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         //※■※指定時間経っても割込が無い時は通常状態に戻す
         case enm_Sts2_WaitPassOff:
 #pragma region 通過完了待ち---------------------------
-            if(digitalRead(aryInfo[portNumPass]) == HIGH)
+            if(digitalRead(aryInfo[portNumPass]) == PASS_OFF)
             {
-                digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_ON);
-                GetTime(aryTimeBuf[timePassOn]);
+                digitalWrite(aryInfo[portNumAir], AIR_ON);
+                GetTime(aryTimeBuf[timePassEnd]);
                 ChangeState(aryInfo, enm_Sts3_AirSignal);
             }
             //一定時間、割込みが無い場合は通常状態へ
@@ -119,15 +119,10 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         case enm_Sts3_AirSignal:
 #pragma region エア命令信号発信-------------------------------
             // if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
-            if(CheckElapsedTime(aryTimeBuf[timePassOn], TIME_AIR_SIGNAL_ON))
+            if(CheckElapsedTime(aryTimeBuf[timePassEnd], TIME_AIR_SIGNAL_ON))
             {
-                digitalWrite(aryInfo[portNumAir], AIR_SIGNAL_OFF);
+                digitalWrite(aryInfo[portNumAir], AIR_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
-#ifdef DEBUG_SERIAL_OUT
-                Serial.print("-----");
-                Serial.print(strAreaName);
-                Serial.println(" State 0 Wait detection-----");
-#endif
             }
             break;
 #pragma endregion

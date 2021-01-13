@@ -16,8 +16,8 @@ long AryInfoW[8] = {0,
                     PORT_AIR_W,
                     0,0,0,1};
 
-long AryTimeBuf_PE[8] = {0,0,0,0,0,0,0,0};
-long AryTimeBuf_W[8] = {0,0,0,0,0,0,0,0};
+long AryTimeBuf_PE[9] = {0,0,0,0,0,0,0,0,0};
+long AryTimeBuf_W[9] = {0,0,0,0,0,0,0,0,0};
 
 long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
 long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};
