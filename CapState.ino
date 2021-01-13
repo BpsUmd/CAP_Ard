@@ -13,28 +13,12 @@
 //*********************************************************************************
 //*********************************************************************************
 //*********************************************************************************
+//セッティング
 //*********************************************************************************
 //*********************************************************************************
 void setup() {
     Serial.begin(115200);
     InitPort();//ポートのイニシャライズ
-#ifdef DEBUG_TIME_SEND
-    digitalWrite(PORT_LED, LED_ON);
-    digitalWrite(PORT_LED_PE, LED_ON);
-    digitalWrite(PORT_LED_W, LED_ON);
-    digitalWrite(PORT_LED_AIR, LED_ON);
-    delay(500);
-    digitalWrite(PORT_LED, LED_OFF);
-    digitalWrite(PORT_LED_PE, LED_OFF);
-    digitalWrite(PORT_LED_W, LED_OFF);
-    digitalWrite(PORT_LED_AIR, LED_OFF);
-#else //DEBUG_TIME_SEND
-    FlashLED(PORT_LED, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_PE, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_W, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_AIR, 3, 50, LED_OFF);
-
-#endif //DEBUG_TIME_SEND
 
     //割り込み設定
     attachInterrupt(INT_NUM_AREA2, Int_DetIn_PE, FALLING);
@@ -43,6 +27,7 @@ void setup() {
     attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);
     // attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimePE, FALLING);
 
+    FlashLED_All(100, 5);
     Serial.println("-----Start-----");
 
 // #ifdef DEBUG_SERIAL_OUT
@@ -51,6 +36,10 @@ void setup() {
 // #endif
 }
 
+//*********************************************************************************
+//*********************************************************************************
+//メインループ
+//*********************************************************************************
 //*********************************************************************************
 void loop() 
 {
@@ -64,16 +53,17 @@ void loop()
 //*********************************************************************************
 //*********************************************************************************
 //*********************************************************************************
-//*********************************************************************************
-//*********************************************************************************
 
-//void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
+
+
+//*********************************************************************************
+//状態遷移
+//*********************************************************************************
+// //void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
 void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 {
     long TimeBuf = 0;
 
-//===========================================================
-//===========================================================
     switch(aryInfo[areaState])
     {
         //=======================================================================================
@@ -86,6 +76,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 
         //=======================================================================================
         //待ち時間　通過より検知が先になった時の対策
+        //※変更　　時間管理 → 通過ON信号を待つ
         // // case enm_Sts1_Wait:
         // //     if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
         // //     {
@@ -101,7 +92,11 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 ChangeState(aryInfo, enm_Sts2_WaitPassOff);
             //いつまでもONにならない場合は検知キャンセル
             else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
+            {
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
+                //LED消灯
+                digitalWrite(aryInfo[portNumLED], LED_OFF);
+            }
             break;
 
 
@@ -113,13 +108,17 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             if(digitalRead(aryInfo[portNumPass]) == PASS_OFF)
             {
                 digitalWrite(aryInfo[portNumAir], AIR_ON);
+                //LED消灯
+                digitalWrite(aryInfo[portNumLED], LED_OFF);
                 GetTime(aryTimeBuf[timePassEnd]);
                 ChangeState(aryInfo, enm_Sts3_AirSignal);
             }
-            //一定時間、割込みが無い場合は通常状態へ
+            //一定時間、センサがOFFしない場合は通常状態へ
             else if(CheckElapsedTime(aryTimeBuf[timeWaitPassStart], TIME_CANCEL) && 
                         aryInfo[areaState] == enm_Sts2_WaitPassOff)
             {
+                //LED消灯
+                digitalWrite(aryInfo[portNumLED], LED_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
             }
             break;
@@ -144,25 +143,32 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 
 
 //*********************************************************************************
+//状態変更
+//*********************************************************************************
 void ChangeState(long *aryInfo, int stateNum)
 {
     aryInfo[areaState] = stateNum;
-    aryInfo[cntBuf] = 0;
+    // // aryInfo[cntBuf] = 0;
 }
 
 //*********************************************************************************
-bool CheckCnt(long& cnt, long endNum)
-{
-    if(cnt >= endNum)
-        return true;
-    else
-    {
-        cnt++;
-        return false;
-    }
-}
+//カウントとカウント数チェック
+//*********************************************************************************
+// // bool CheckCnt(long& cnt, long endNum)
+// // {
+// //     if(cnt >= endNum)
+// //         return true;
+// //     //カウンタをインクリメント
+// //     else
+// //     {
+// //         cnt++;
+// //         return false;
+// //     }
+// // }
 
-//***************************************************a******************************
+//*********************************************************************************
+//指定LED点灯
+//*********************************************************************************
 void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 {
     for (int i = 0; i < loopNum; i++)
@@ -176,53 +182,91 @@ void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 }
 
 //*********************************************************************************
-void Output_Interval_Count()
+//すべてのLED点灯
+//*********************************************************************************
+void FlashLED_All(int delayTime, int loopNum)
 {
-    if(ReceiveSerial(Serial))
+    for (int i = 0; i < loopNum; i++)
     {
-        Serial.println("=====PE=====");
-        Serial.print("Under100ms,");
-        Serial.println(AryIntervalCount_PE[enmUnder100]);
-        Serial.print("101-150ms,");
-        Serial.println(AryIntervalCount_PE[enm101_150]);
-        Serial.print("151-200ms,");
-        Serial.println(AryIntervalCount_PE[enm151_200]);
-        Serial.print("201-250ms,");
-        Serial.println(AryIntervalCount_PE[enm201_250]);
-        Serial.print("251-300ms,");
-        Serial.println(AryIntervalCount_PE[enm251_300]);
-        Serial.print("301-350ms,");
-        Serial.println(AryIntervalCount_PE[enm301_350]);
-        Serial.print("351-400ms,");
-        Serial.println(AryIntervalCount_PE[enm351_400]);
-        Serial.print("401-450ms,");
-        Serial.println(AryIntervalCount_PE[enm401_450]);
-        Serial.print("451-500ms,");
-        Serial.println(AryIntervalCount_PE[enm451_500]);
-        Serial.print("Over501ms,");
-        Serial.println(AryIntervalCount_PE[enmOver501]);
-        Serial.println("");
-        Serial.println("=====White=====");
-        Serial.print("Under100ms,");
-        Serial.println(AryIntervalCount_W[enmUnder100]);
-        Serial.print("101-150ms,");
-        Serial.println(AryIntervalCount_W[enm101_150]);
-        Serial.print("151-200ms,");
-        Serial.println(AryIntervalCount_W[enm151_200]);
-        Serial.print("201-250ms,");
-        Serial.println(AryIntervalCount_W[enm201_250]);
-        Serial.print("251-300ms,");
-        Serial.println(AryIntervalCount_W[enm251_300]);
-        Serial.print("301-350ms,");
-        Serial.println(AryIntervalCount_W[enm301_350]);
-        Serial.print("351-400ms,");
-        Serial.println(AryIntervalCount_W[enm351_400]);
-        Serial.print("401-450ms,");
-        Serial.println(AryIntervalCount_W[enm401_450]);
-        Serial.print("451-500ms,");
-        Serial.println(AryIntervalCount_W[enm451_500]);
-        Serial.print("Over501ms,");
-        Serial.println(AryIntervalCount_W[enmOver501]);
-
+        digitalWrite(PORT_LED_0, LED_ON);
+        digitalWrite(PORT_LED_PE, LED_OFF);
+        digitalWrite(PORT_LED_W, LED_OFF);
+        delay(delayTime);
+        digitalWrite(PORT_LED_0, LED_OFF);
+        digitalWrite(PORT_LED_PE, LED_ON);
+        digitalWrite(PORT_LED_W, LED_OFF);
+        delay(delayTime);
+        digitalWrite(PORT_LED_0, LED_OFF);
+        digitalWrite(PORT_LED_PE, LED_OFF);
+        digitalWrite(PORT_LED_W, LED_ON);
+        delay(delayTime);
+        digitalWrite(PORT_LED_0, LED_OFF);
+        digitalWrite(PORT_LED_PE, LED_ON);
+        digitalWrite(PORT_LED_W, LED_OFF);
+    }
+    
+    for (int i = 0; i < loopNum; i++)
+    {
+        digitalWrite(PORT_LED_0, LED_ON);
+        digitalWrite(PORT_LED_PE, LED_ON);
+        digitalWrite(PORT_LED_W, LED_ON);
+        delay(delayTime / 2);    
+        digitalWrite(PORT_LED_0, LED_OFF);
+        digitalWrite(PORT_LED_PE, LED_OFF);
+        digitalWrite(PORT_LED_W, LED_OFF);    
     }
 }
+
+//*********************************************************************************
+//通過スピードカウンタをシリアル送信
+//*********************************************************************************
+// // void Output_Interval_Count()
+// // {
+// //     if(ReceiveSerial(Serial))
+// //     {
+// //         Serial.println("=====PE=====");
+// //         Serial.print("Under100ms,");
+// //         Serial.println(AryIntervalCount_PE[enmUnder100]);
+// //         Serial.print("101-150ms,");
+// //         Serial.println(AryIntervalCount_PE[enm101_150]);
+// //         Serial.print("151-200ms,");
+// //         Serial.println(AryIntervalCount_PE[enm151_200]);
+// //         Serial.print("201-250ms,");
+// //         Serial.println(AryIntervalCount_PE[enm201_250]);
+// //         Serial.print("251-300ms,");
+// //         Serial.println(AryIntervalCount_PE[enm251_300]);
+// //         Serial.print("301-350ms,");
+// //         Serial.println(AryIntervalCount_PE[enm301_350]);
+// //         Serial.print("351-400ms,");
+// //         Serial.println(AryIntervalCount_PE[enm351_400]);
+// //         Serial.print("401-450ms,");
+// //         Serial.println(AryIntervalCount_PE[enm401_450]);
+// //         Serial.print("451-500ms,");
+// //         Serial.println(AryIntervalCount_PE[enm451_500]);
+// //         Serial.print("Over501ms,");
+// //         Serial.println(AryIntervalCount_PE[enmOver501]);
+// //         Serial.println("");
+// //         Serial.println("=====White=====");
+// //         Serial.print("Under100ms,");
+// //         Serial.println(AryIntervalCount_W[enmUnder100]);
+// //         Serial.print("101-150ms,");
+// //         Serial.println(AryIntervalCount_W[enm101_150]);
+// //         Serial.print("151-200ms,");
+// //         Serial.println(AryIntervalCount_W[enm151_200]);
+// //         Serial.print("201-250ms,");
+// //         Serial.println(AryIntervalCount_W[enm201_250]);
+// //         Serial.print("251-300ms,");
+// //         Serial.println(AryIntervalCount_W[enm251_300]);
+// //         Serial.print("301-350ms,");
+// //         Serial.println(AryIntervalCount_W[enm301_350]);
+// //         Serial.print("351-400ms,");
+// //         Serial.println(AryIntervalCount_W[enm351_400]);
+// //         Serial.print("401-450ms,");
+// //         Serial.println(AryIntervalCount_W[enm401_450]);
+// //         Serial.print("451-500ms,");
+// //         Serial.println(AryIntervalCount_W[enm451_500]);
+// //         Serial.print("Over501ms,");
+// //         Serial.println(AryIntervalCount_W[enmOver501]);
+
+// //     }
+// // }

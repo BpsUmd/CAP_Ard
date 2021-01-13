@@ -6,8 +6,8 @@ extern bool FlgW;
 extern int DebugCntAAA;
 
 //=============================
-extern long AryInfoPE[7];
-extern long AryInfoW[7];
+extern long AryInfoPE[6];
+extern long AryInfoW[6];
 
 enum _EnmAryInfo
 {
@@ -15,8 +15,9 @@ enum _EnmAryInfo
     portNumPass,
     portNumDetection,
     portNumAir,
-    cntBuf,
-    flgAirOrderWaitStart,//Air命令waitを開始しているか
+    portNumLED,
+    // //cntBuf,
+    // //flgAirOrderWaitStart,//Air命令waitを開始しているか
     flgPassFirstTime
 };
 
@@ -36,10 +37,10 @@ enum _TimeBuf
     timePassSpeedMin,
     timePassInterval,
     timePassIntervalMin
-    // timeAirSignalEnd,
-    // timeAirInterval,
-    // timeAirIntervalMin,
-    // timeAirIntervalAvr
+    // // timeAirSignalEnd,
+    // // timeAirInterval,
+    // // timeAirIntervalMin,
+    // // timeAirIntervalAvr
 };
 
 //=============================
