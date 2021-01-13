@@ -4,20 +4,20 @@ bool FlgPE = false;
 bool FlgW = false;
 int DebugCntAAA = 0;
 
-long AryInfoPE[8] = {0,
+long AryInfoPE[7] = {0,
                      PORT_SENSOR_PASS_2,
                      PORT_DETECTION_PE,
                      PORT_AIR_PE,
-                     0,0,0,1};
+                     0,0,1};
 
-long AryInfoW[8] = {0,
+long AryInfoW[7] = {0,
                     PORT_SENSOR_PASS_3,
                     PORT_DETECTION_W,
                     PORT_AIR_W,
-                    0,0,0,1};
+                    0,0,1};
 
-long AryTimeBuf_PE[9] = {0,0,0,0,0,0,0,0,0};
-long AryTimeBuf_W[9] = {0,0,0,0,0,0,0,0,0};
+long AryTimeBuf_PE[10] = {0,0,0,0,0,0,0,0,0,0};
+long AryTimeBuf_W[10] = {0,0,0,0,0,0,0,0,0,0};
 
 long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
 long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};

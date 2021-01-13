@@ -131,7 +131,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 }
 
 
-
 //*********************************************************************************
 void ChangeState(long *aryInfo, int stateNum)
 {

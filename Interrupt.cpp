@@ -61,9 +61,14 @@ void Int_DetIn_W()
 //*********************************************************************************
 void OrderAir(long *aryInfo, long *aryTimeBuf)
 {
+    //初回はスルーチェック無し
+    if(aryTimeBuf[timeGetDetect]  != 0 && 
+        !CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
+
     if(aryInfo[areaState] == enm_Sts0_WaitDetection)
     {
         aryInfo[areaState] = enm_Sts1_Wait;
         GetTime(aryTimeBuf[timeWaitStart]);
+        GetTime(aryTimeBuf[timeGetDetect]);
     }
 }
