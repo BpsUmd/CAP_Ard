@@ -14,6 +14,7 @@
 // #define AIR_SIGNAL_ON 1
 // #define AIR_SIGNAL_OFF 0
 
+#define PASS_ON 0
 #define PASS_OFF 1
 
 //Port番号-----------------------

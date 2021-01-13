@@ -64,7 +64,8 @@ enum _IntervalCount
 enum _StateTransition
 {
     enm_Sts0_WaitDetection = 0,
-    enm_Sts1_Wait,
+    // // enm_Sts1_Wait,
+    enm_Sts1_CheckPassOn,
     enm_Sts2_WaitPassOff,
     enm_Sts3_AirSignal
 };

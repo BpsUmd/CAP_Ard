@@ -84,17 +84,29 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             break;
 #pragma endregion
 
+        //=======================================================================================
         //待ち時間　通過より検知が先になった時の対策
-        case enm_Sts1_Wait:
-            if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
-            {
-                GetTime(aryTimeBuf[timeWaitPassStart]);
-                ChangeState(aryInfo, enm_Sts2_WaitPassOff);
-            }
-            break;
+        // // case enm_Sts1_Wait:
+        // //     if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
+        // //     {
+        // //         GetTime(aryTimeBuf[timeWaitPassStart]);
+        // //         ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+        // //     }
+        // //     break;
 
         //=======================================================================================
-        //1 "通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
+        //通過センサがオンになるまで待つ
+        case enm_Sts1_CheckPassOn:
+            if(digitalRead(aryInfo[portNumPass]) == PASS_ON)
+                ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+            //いつまでもONにならない場合は検知キャンセル
+            else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
+                ChangeState(aryInfo, enm_Sts0_WaitDetection);
+            break;
+
+
+        //=======================================================================================
+        //1 "通過完了待ち"　通過センサがOFFになったら、 "エア命令発信遅延" へ
         //※■※指定時間経っても割込が無い時は通常状態に戻す
         case enm_Sts2_WaitPassOff:
 #pragma region 通過完了待ち---------------------------
