@@ -5,24 +5,6 @@
 
 
 //*********************************************************************************
-//エリア2 通過開始割込み
-//*********************************************************************************
-void Int_SetPassOnTimePE()
-{
-    SetTimeIntervalBuf(AryInfoPE, AryTimeBuf_PE);
-    // GetTime(AryTimeBuf_PE[timePassOn]);
-}
-
-//*********************************************************************************
-//エリア3 通過開始割込み
-//*********************************************************************************
-void Int_SetPassOnTimeW()
-{
-    SetTimeIntervalBuf(AryInfoW, AryTimeBuf_W);
-    // GetTime(AryTimeBuf_W[timePassOn]);
-}
-
-//*********************************************************************************
 //*********************************************************************************
 void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
 {
@@ -63,51 +45,30 @@ void IntervalCount(long *aryIntervalCount, long interval_time)
         aryIntervalCount[enmOver501]++;
 }
 
-//=======================================================================================
-//=======================================================================================
+
 //*********************************************************************************
-//エリア2 CAP通過終了時の割込み
-//*********************************************************************************
-void Int_DetectionPE()
+void Int_DetIn_PE()
 {
-    OrderAir(AryInfoPE, AryTimeBuf_PE, AryIntervalCount_PE);
+    OrderAir(AryInfoPE, AryTimeBuf_PE);
 }
 
 //*********************************************************************************
-//エリア3 CAP通過終了時の割込み
-//*********************************************************************************
-void Int_DetectionW()
+void Int_DetIn_W()
 {
-    //通過時間を取得
-    // AryTimeBuf_W[timePassSpeed] = TimeElapsed(AryTimeBuf_W[timePassOn]);
-    OrderAir(AryInfoW, AryTimeBuf_W, AryIntervalCount_W);
+    OrderAir(AryInfoW, AryTimeBuf_W);
 }
 
 //*********************************************************************************
-//*********************************************************************************
-void OrderAir(long *aryInfo, long *aryTimeBuf, long *aryIntervalCount)
+void OrderAir(long *aryInfo, long *aryTimeBuf)
 {
-    //==============時間処理==============
-    //通過時間を取得
-    aryTimeBuf[timePassSpeed] = TimeElapsed(aryTimeBuf[timePassOn]);
+    //初回はスルーチェック無し
+    if(aryTimeBuf[timeGetDetect]  != 0 && 
+        !CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
 
-    //==============信号処理==============
-    //検知信号が無い場合は”通常状態”へ
-    if(AryInfoW[areaState] != enm_Sts1_WaitPassOff)
-        AryInfoW[areaState] = enm_Sts0_WaitDetection;
-    //検知信号を受けている場合は”エア命令発信待ち”へ
-    else
-        aryInfo[areaState] = enm_Sts2_WaitAirOrder;
-    
-    //インターバル時間をカウント
-    IntervalCount(aryIntervalCount, aryTimeBuf[timePassInterval]);
-
-    //カウンタをリセット
-    aryInfo[cntBuf] = 0;
-    //初回フラグをリセット
-    if(AryInfoW[flgPassFirstTime] >= 1)
-        AryInfoW[flgPassFirstTime] = 0;
-        
-    //キャップ間隔情報を出力するフラグをセット
-    aryInfo[flgSerialOut] = 1;
+    if(aryInfo[areaState] == enm_Sts0_WaitDetection)
+    {
+        aryInfo[areaState] = enm_Sts1_Wait;
+        GetTime(aryTimeBuf[timeWaitStart]);
+        GetTime(aryTimeBuf[timeGetDetect]);
+    }
 }
