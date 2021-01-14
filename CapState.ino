@@ -27,7 +27,7 @@ void setup() {
     attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);
     // attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimePE, FALLING);
 
-    FlashLED_All(100, 5);
+    FlashLED_All(50, 5);
     Serial.println("-----Start-----");
 
 // #ifdef DEBUG_SERIAL_OUT
