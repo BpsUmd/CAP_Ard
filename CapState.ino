@@ -94,11 +94,14 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             break;
         
         //=======================================================================================
-        //通過センサがOFFになっているかチェック
-        case enm_Sts1_CheckPassOFF:
-                //通過センサがOFFになっているかチェック
-                if(digitalRead(aryInfo[portNumPass]) == 0)
+        //通過センサがONになっているかチェック
+        case enm_Sts1_CheckPassOn:
+                //通過センサがONになっているかチェック
+                if(digitalRead(aryInfo[portNumPass]) == PASS_ON)
+                {
+                    GetTime(aryTimeBuf[timeWaitPassStart]);
                     ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+                }
                 //タイムオーバー
                 else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
                     ChangeState(aryInfo, enm_Sts0_WaitDetection);
