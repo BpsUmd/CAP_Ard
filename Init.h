@@ -15,7 +15,7 @@ enum _EnmAryInfo
     portNumPass,
     portNumDetection,
     portNumAir,
-    cntBuf,
+    portNumLED,
     flgAirOrderWaitStart,//Air命令waitを開始しているか
     flgDetectFirstTime
 };

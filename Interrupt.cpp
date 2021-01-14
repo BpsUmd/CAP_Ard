@@ -68,6 +68,7 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
     // if(aryInfo[areaState] == enm_Sts0_WaitDetection)
     // {
     aryInfo[areaState] = enm_Sts1_Wait;
+    digitalWrite(aryInfo[portNumLED], LED_ON);
     GetTime(aryTimeBuf[timeWaitStart]);
     GetTime(aryTimeBuf[timeGetDetect]);
     // }

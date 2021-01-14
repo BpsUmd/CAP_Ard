@@ -8,13 +8,15 @@ long AryInfoPE[7] = {0,
                      PORT_SENSOR_PASS_2,
                      PORT_DETECTION_PE,
                      PORT_AIR_PE,
-                     0,0,1};
+                     PORT_LED_PE,
+                     0,1};
 
 long AryInfoW[7] = {0,
                     PORT_SENSOR_PASS_3,
                     PORT_DETECTION_W,
                     PORT_AIR_W,
-                    0,0,1};
+                    PORT_LED_W,
+                    0,1};
 
 long AryTimeBuf_PE[10] = {0,0,0,0,0,0,0,0,0,0};
 long AryTimeBuf_W[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -22,6 +24,7 @@ long AryTimeBuf_W[10] = {0,0,0,0,0,0,0,0,0,0};
 long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
 long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};
 
+//*********************************************************************************
 void InitPort()
 {
     //----------------------------
@@ -49,7 +52,8 @@ void InitPort()
     //ポート状態------------------------
     digitalWrite(PORT_AIR_PE, AIR_OFF);
     digitalWrite(PORT_AIR_W, AIR_OFF);
-    digitalWrite(PORT_LED, LED_OFF);
+    
+    digitalWrite(PORT_LED, HIGH);
     digitalWrite(PORT_LED_PE, LED_OFF);
     digitalWrite(PORT_LED_W, LED_OFF);
     digitalWrite(PORT_LED_AIR, LED_OFF);
