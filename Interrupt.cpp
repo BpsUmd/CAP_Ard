@@ -6,19 +6,19 @@
 
 //*********************************************************************************
 //*********************************************************************************
-void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
-{
-    //////long Time_Buf = aryTimeBuf[timePassInterval];
+// void SetTimeIntervalBuf(long *aryInfo, long *aryTimeBuf)
+// {
+//     //////long Time_Buf = aryTimeBuf[timePassInterval];
     
-    //前回のON時間から通過間隔をセット
-    aryTimeBuf[timePassInterval] = TimeElapsed(aryTimeBuf[timePassOn]);
-    //現在時間をON時間に格納
-    GetTime(aryTimeBuf[timePassOn]);
+//     //前回のON時間から通過間隔をセット
+//     aryTimeBuf[timePassInterval] = TimeElapsed(aryTimeBuf[timePassOn]);
+//     //現在時間をON時間に格納
+//     GetTime(aryTimeBuf[timePassOn]);
 
-    //通過間隔の最小値をセット
-    if(aryInfo[flgPassFirstTime] >= 1 || aryTimeBuf[timePassIntervalMin] > aryTimeBuf[timePassInterval])
-        aryTimeBuf[timePassIntervalMin] = aryTimeBuf[timePassInterval];
-}
+//     //通過間隔の最小値をセット
+//     if(aryInfo[flgDetectFirstTime] >= 1 || aryTimeBuf[timePassIntervalMin] > aryTimeBuf[timePassInterval])
+//         aryTimeBuf[timePassIntervalMin] = aryTimeBuf[timePassInterval];
+// }
 
 //*********************************************************************************
 void IntervalCount(long *aryIntervalCount, long interval_time)
@@ -61,14 +61,16 @@ void Int_DetIn_W()
 //*********************************************************************************
 void OrderAir(long *aryInfo, long *aryTimeBuf)
 {
-    //初回はスルーチェック無し
-    if(aryTimeBuf[timeGetDetect]  != 0 && 
-        !CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
+    if(aryTimeBuf[flgDetectFirstTime] == 1)
+        aryTimeBuf[flgDetectFirstTime] = 0;
+    else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
 
-    if(aryInfo[areaState] == enm_Sts0_WaitDetection)
-    {
-        aryInfo[areaState] = enm_Sts1_Wait;
-        GetTime(aryTimeBuf[timeWaitStart]);
-        GetTime(aryTimeBuf[timeGetDetect]);
-    }
+    // if(aryInfo[areaState] == enm_Sts0_WaitDetection)
+    // {
+    aryInfo[areaState] = enm_Sts1_Wait;
+    digitalWrite(aryInfo[portNumLED], LED_ON);
+    GetTime(aryTimeBuf[timeWaitStart]);
+    GetTime(aryTimeBuf[timeGetDetect]);
+    // }
+
 }

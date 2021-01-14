@@ -66,7 +66,6 @@ void loop()
 //*********************************************************************************
 //*********************************************************************************
 //*********************************************************************************
-
 //void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
 void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 {
@@ -100,6 +99,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 #pragma region 通過完了待ち---------------------------
             if(digitalRead(aryInfo[portNumPass]) == PASS_OFF)
             {
+                digitalWrite(aryInfo[portNumLED], LED_OFF);
                 digitalWrite(aryInfo[portNumAir], AIR_ON);
                 GetTime(aryTimeBuf[timePassEnd]);
                 ChangeState(aryInfo, enm_Sts3_AirSignal);
@@ -108,6 +108,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             else if(CheckElapsedTime(aryTimeBuf[timeWaitPassStart], TIME_CANCEL) && 
                         aryInfo[areaState] == enm_Sts2_WaitPassOff)
             {
+                digitalWrite(aryInfo[portNumLED], LED_OFF);
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
             }
             break;
@@ -135,7 +136,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 void ChangeState(long *aryInfo, int stateNum)
 {
     aryInfo[areaState] = stateNum;
-    aryInfo[cntBuf] = 0;
+    //aryInfo[cntBuf] = 0;
 }
 
 //*********************************************************************************

@@ -8,33 +8,36 @@ void GetTime(long& valTime)
 }
 
 //*********************************************************************************
-long TimeElapsed(long startTime)
-{
-    long resultTime = 0;
-    long nowTime = millis();
+// // long TimeElapsed(long startTime)
+// // {
+// //     long resultTime = 0;
+// //     long nowTime = millis();
 
-    //millilの値がリセットされたときの対処
-    if(nowTime < startTime)
-        resultTime = nowTime + (TIME_MAX_VALUE - startTime);
-    else
-        resultTime = nowTime - startTime;
+// //     //millilの値がリセットされたときの対処
+// //     if(nowTime < startTime)
+// //         resultTime = nowTime + (TIME_MAX_VALUE - startTime);
+// //     else
+// //         resultTime = nowTime - startTime;
 
-    return resultTime;
-}
+// //     return resultTime;
+// // }
 
 //*********************************************************************************
 bool CheckElapsedTime(long startTime, long targetTime)
 {
     long nowTime = millis();
-    long resultTime;
+    // long resultTime;
 
     if(startTime > nowTime)
-        resultTime = nowTime + (TIME_MAX_VALUE - startTime);
+    {
+        //resultTime = nowTime + (TIME_MAX_VALUE - startTime);
+        if((nowTime + (TIME_MAX_VALUE - startTime)) >= targetTime) return true;
+    }
     else
-        resultTime = nowTime - startTime;
+        if(nowTime - startTime >= targetTime) return true;
+        // resultTime = nowTime - startTime;
     
-    if(resultTime >= targetTime)
-        return true;
+    
     else
         return false;
 }

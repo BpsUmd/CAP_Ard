@@ -5,8 +5,8 @@
 
 
 //論理-----------------------
-#define LED_ON 1
-#define LED_OFF 0
+#define LED_ON 0
+#define LED_OFF 1
 
 #define AIR_ON 0
 #define AIR_OFF 1
@@ -27,9 +27,9 @@
 #define PORT_AIR_W 7
 
 #define PORT_LED 13
-#define PORT_LED_PE 14
-#define PORT_LED_W 15
-#define PORT_LED_AIR 16
+#define PORT_LED_AIR 14
+#define PORT_LED_PE 15
+#define PORT_LED_W 16
 
 //割込み番号------------------------
 #define INT_NUM_AREA2 0
@@ -37,7 +37,7 @@
 
 //時間
 #define TIME_WAIT 50
-#define TIME_AIR_SIGNAL_ON 50
+#define TIME_AIR_SIGNAL_ON 30
 #define TIME_CANCEL 1000
 #define TIME_CANCEL_NEXT_DETECT 250
 
