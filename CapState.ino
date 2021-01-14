@@ -83,6 +83,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
             break;
 #pragma endregion
 
+        //=======================================================================================
         //待ち時間　通過より検知が先になった時の対策
         case enm_Sts1_Wait:
             if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
@@ -90,6 +91,17 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 GetTime(aryTimeBuf[timeWaitPassStart]);
                 ChangeState(aryInfo, enm_Sts2_WaitPassOff);
             }
+            break;
+        
+        //=======================================================================================
+        //通過センサがOFFになっているかチェック
+        case enm_Sts1_CheckPassOFF:
+                //通過センサがOFFになっているかチェック
+                if(digitalRead(aryInfo[portNumPass]) == 0)
+                    ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+                //タイムオーバー
+                else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
+                    ChangeState(aryInfo, enm_Sts0_WaitDetection);
             break;
 
         //=======================================================================================
@@ -130,7 +142,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 
     }
 }
-
 
 //*********************************************************************************
 void ChangeState(long *aryInfo, int stateNum)

@@ -38,7 +38,7 @@
 //時間
 #define TIME_WAIT 50
 #define TIME_AIR_SIGNAL_ON 30
-#define TIME_CANCEL 1000
+#define TIME_CANCEL 500
 #define TIME_CANCEL_NEXT_DETECT 250
 
 //カウント閾------------------------
