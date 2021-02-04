@@ -47,11 +47,11 @@
 #define TIME_CANCEL_NEXT_DETECT 250
 
 //カウント閾------------------------
+//カウント数管理から、時間管理に変更したので削除
 // #define CNT_AIR_SIGNAL 1000
-#define CNT_AIR_SIGNAL 5000
-
-#define CNT_FLG_CANCEL 62000
-#define CNT_WAIT 5000
+////#define CNT_AIR_SIGNAL 5000
+////#define CNT_FLG_CANCEL 62000
+////#define CNT_WAIT 5000
 
 //その他-----------------------
 #define AREA_NUM_PE 2
@@ -61,6 +61,6 @@
 #define TIME_DEVIDE 0
 
 //デバッグ用--------------------------
-#define CNT_DEBUG 100000
+////#define CNT_DEBUG 100000
 #define PORT_DEBUG_PE 11
 #define PORT_DEBUG_W 12
