@@ -40,6 +40,10 @@
 #define TIME_WAIT 50
 #define TIME_AIR_SIGNAL_ON 30
 #define TIME_CANCEL 500
+
+//通過センサのバタつきが起こっている為、
+//カメラ制御BOXからPE検出信号が、1つのCAPに対して複数送信される。
+//1つのPE信号を受けた後、一定時間のPE信号を無視するようにする。
 #define TIME_CANCEL_NEXT_DETECT 250
 
 //カウント閾------------------------
@@ -53,7 +57,7 @@
 #define AREA_NUM_PE 2
 #define AREA_NUM_W 3
 
-#define TIME_MAX_VALUE 4294967295
+#define TIME_MAX_VALUE 4294967295//PGM開始からの時間カウント最大値
 #define TIME_DEVIDE 0
 
 //デバッグ用--------------------------
