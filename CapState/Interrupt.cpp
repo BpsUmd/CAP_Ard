@@ -61,8 +61,12 @@ void Int_DetIn_W()
 //*********************************************************************************
 void OrderAir(long *aryInfo, long *aryTimeBuf)
 {
+    //アイドル状態じゃ無い時は検知信号を無視()
+    if (aryInfo[areaState] != enm_Sts0_WaitDetection) return;
+
     if(aryTimeBuf[flgDetectFirstTime] == 1)
         aryTimeBuf[flgDetectFirstTime] = 0;
+    //検知信号を受けて無視する時間が経過していないときは処理を中断
     else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
 
     // if(aryInfo[areaState] == enm_Sts0_WaitDetection)

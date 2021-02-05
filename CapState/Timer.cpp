@@ -27,7 +27,6 @@ bool CheckElapsedTime(long startTime, long targetTime)
 {
     long nowTime = millis();
     // long resultTime;
-
     if(startTime > nowTime)
     {
         //resultTime = nowTime + (TIME_MAX_VALUE - startTime);

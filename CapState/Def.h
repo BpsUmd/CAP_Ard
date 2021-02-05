@@ -17,7 +17,7 @@
 #define PASS_ON 0
 #define PASS_OFF 1
 
-//Port番号-----------------------
+//Port番号----------------------- 
 #define PORT_SENSOR_PASS_2 4
 #define PORT_SENSOR_PASS_3 5
 
@@ -44,7 +44,7 @@
 //通過センサのバタつきが起こっている為、
 //カメラ制御BOXからPE検出信号が、1つのCAPに対して複数送信される。
 //1つのPE信号を受けた後、一定時間のPE信号を無視するようにする。
-#define TIME_CANCEL_NEXT_DETECT 250
+#define TIME_CANCEL_NEXT_DETECT 150
 
 //カウント閾------------------------
 //カウント数管理から、時間管理に変更したので削除
