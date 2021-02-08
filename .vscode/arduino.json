@@ -1,5 +1,5 @@
 {
     "board": "arduino:avr:uno",
-    "sketch": "CapState.ino",
-    "port": "COM5"
+    "sketch": "CapState\\CapState.ino",
+    "port": "COM7"
 }
