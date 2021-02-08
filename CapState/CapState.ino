@@ -91,14 +91,14 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 #pragma endregion
 
         //=======================================================================================
-        //待ち時間　通過より検知が先になった時の対策
-        case enm_Sts1_Wait:
-            if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
-            {
-                GetTime(aryTimeBuf[timeWaitPassStart]);
-                ChangeState(aryInfo, enm_Sts2_WaitPassOff);
-            }
-            break;
+        //待ち時間　通過より検知が先になった時の為に待ち時間を
+        // case enm_Sts1_Wait:
+        //     if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
+        //     {
+        //         GetTime(aryTimeBuf[timeWaitPassStart]);
+        //         ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+        //     }
+        //     break;
         
         //=======================================================================================
         //通過センサがONになっているかチェック
@@ -109,8 +109,9 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                     GetTime(aryTimeBuf[timeWaitPassStart]);
                     ChangeState(aryInfo, enm_Sts2_WaitPassOff);
                 }
-                //タイムオーバー
-                else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
+                //検知後、待ち時間以上経過しても通過センサがONにならない場合はアイドル状態に戻す
+                //else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
+                else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_PASS_ON))
                     ChangeState(aryInfo, enm_Sts0_WaitDetection);
             break;
 
@@ -186,53 +187,53 @@ void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 }
 
 //*********************************************************************************
-void Output_Interval_Count()
-{
-    if(ReceiveSerial(Serial))
-    {
-        Serial.println("=====PE=====");
-        Serial.print("Under100ms,");
-        Serial.println(AryIntervalCount_PE[enmUnder100]);
-        Serial.print("101-150ms,");
-        Serial.println(AryIntervalCount_PE[enm101_150]);
-        Serial.print("151-200ms,");
-        Serial.println(AryIntervalCount_PE[enm151_200]);
-        Serial.print("201-250ms,");
-        Serial.println(AryIntervalCount_PE[enm201_250]);
-        Serial.print("251-300ms,");
-        Serial.println(AryIntervalCount_PE[enm251_300]);
-        Serial.print("301-350ms,");
-        Serial.println(AryIntervalCount_PE[enm301_350]);
-        Serial.print("351-400ms,");
-        Serial.println(AryIntervalCount_PE[enm351_400]);
-        Serial.print("401-450ms,");
-        Serial.println(AryIntervalCount_PE[enm401_450]);
-        Serial.print("451-500ms,");
-        Serial.println(AryIntervalCount_PE[enm451_500]);
-        Serial.print("Over501ms,");
-        Serial.println(AryIntervalCount_PE[enmOver501]);
-        Serial.println("");
-        Serial.println("=====White=====");
-        Serial.print("Under100ms,");
-        Serial.println(AryIntervalCount_W[enmUnder100]);
-        Serial.print("101-150ms,");
-        Serial.println(AryIntervalCount_W[enm101_150]);
-        Serial.print("151-200ms,");
-        Serial.println(AryIntervalCount_W[enm151_200]);
-        Serial.print("201-250ms,");
-        Serial.println(AryIntervalCount_W[enm201_250]);
-        Serial.print("251-300ms,");
-        Serial.println(AryIntervalCount_W[enm251_300]);
-        Serial.print("301-350ms,");
-        Serial.println(AryIntervalCount_W[enm301_350]);
-        Serial.print("351-400ms,");
-        Serial.println(AryIntervalCount_W[enm351_400]);
-        Serial.print("401-450ms,");
-        Serial.println(AryIntervalCount_W[enm401_450]);
-        Serial.print("451-500ms,");
-        Serial.println(AryIntervalCount_W[enm451_500]);
-        Serial.print("Over501ms,");
-        Serial.println(AryIntervalCount_W[enmOver501]);
+// void Output_Interval_Count()
+// {
+//     if(ReceiveSerial(Serial))
+//     {
+//         Serial.println("=====PE=====");
+//         Serial.print("Under100ms,");
+//         Serial.println(AryIntervalCount_PE[enmUnder100]);
+//         Serial.print("101-150ms,");
+//         Serial.println(AryIntervalCount_PE[enm101_150]);
+//         Serial.print("151-200ms,");
+//         Serial.println(AryIntervalCount_PE[enm151_200]);
+//         Serial.print("201-250ms,");
+//         Serial.println(AryIntervalCount_PE[enm201_250]);
+//         Serial.print("251-300ms,");
+//         Serial.println(AryIntervalCount_PE[enm251_300]);
+//         Serial.print("301-350ms,");
+//         Serial.println(AryIntervalCount_PE[enm301_350]);
+//         Serial.print("351-400ms,");
+//         Serial.println(AryIntervalCount_PE[enm351_400]);
+//         Serial.print("401-450ms,");
+//         Serial.println(AryIntervalCount_PE[enm401_450]);
+//         Serial.print("451-500ms,");
+//         Serial.println(AryIntervalCount_PE[enm451_500]);
+//         Serial.print("Over501ms,");
+//         Serial.println(AryIntervalCount_PE[enmOver501]);
+//         Serial.println("");
+//         Serial.println("=====White=====");
+//         Serial.print("Under100ms,");
+//         Serial.println(AryIntervalCount_W[enmUnder100]);
+//         Serial.print("101-150ms,");
+//         Serial.println(AryIntervalCount_W[enm101_150]);
+//         Serial.print("151-200ms,");
+//         Serial.println(AryIntervalCount_W[enm151_200]);
+//         Serial.print("201-250ms,");
+//         Serial.println(AryIntervalCount_W[enm201_250]);
+//         Serial.print("251-300ms,");
+//         Serial.println(AryIntervalCount_W[enm251_300]);
+//         Serial.print("301-350ms,");
+//         Serial.println(AryIntervalCount_W[enm301_350]);
+//         Serial.print("351-400ms,");
+//         Serial.println(AryIntervalCount_W[enm351_400]);
+//         Serial.print("401-450ms,");
+//         Serial.println(AryIntervalCount_W[enm401_450]);
+//         Serial.print("451-500ms,");
+//         Serial.println(AryIntervalCount_W[enm451_500]);
+//         Serial.print("Over501ms,");
+//         Serial.println(AryIntervalCount_W[enmOver501]);
 
-    }
-}
+//     }
+//}

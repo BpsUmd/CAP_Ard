@@ -18,11 +18,11 @@ long AryInfoW[7] = {0,
                     PORT_LED_W,
                     0,1};
 
-long AryTimeBuf_PE[10] = {0,0,0,0,0,0,0,0,0,0};
-long AryTimeBuf_W[10] = {0,0,0,0,0,0,0,0,0,0};
+long AryTimeBuf_PE[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_PE};
+long AryTimeBuf_W[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_W};
 
-long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
-long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};
+// long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
+// long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};
 
 //*********************************************************************************
 void InitPort()

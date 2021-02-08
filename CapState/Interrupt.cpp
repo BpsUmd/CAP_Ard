@@ -21,29 +21,29 @@
 // }
 
 //*********************************************************************************
-void IntervalCount(long *aryIntervalCount, long interval_time)
-{
-    if(100 >= interval_time)
-        aryIntervalCount[enmUnder100]++;
-    if(100 < interval_time && 150 >= interval_time)
-        aryIntervalCount[enm101_150]++;
-    if(150 < interval_time && 200 >= interval_time)
-        aryIntervalCount[enm151_200]++;
-    if(200 < interval_time && 250 >= interval_time)
-        aryIntervalCount[enm201_250]++;
-    if(250 < interval_time && 300 >= interval_time)
-        aryIntervalCount[enm251_300]++;
-    if(300 < interval_time && 350 >= interval_time)
-        aryIntervalCount[enm301_350]++;
-    if(350 < interval_time && 400 >= interval_time)
-        aryIntervalCount[enm351_400]++;
-    if(400 < interval_time && 450 >= interval_time)
-        aryIntervalCount[enm401_450]++;
-    if(450 < interval_time && 500 >= interval_time)
-        aryIntervalCount[enm451_500]++;
-    if(500 < interval_time)
-        aryIntervalCount[enmOver501]++;
-}
+// void IntervalCount(long *aryIntervalCount, long interval_time)
+// {
+//     if(100 >= interval_time)
+//         aryIntervalCount[enmUnder100]++;
+//     if(100 < interval_time && 150 >= interval_time)
+//         aryIntervalCount[enm101_150]++;
+//     if(150 < interval_time && 200 >= interval_time)
+//         aryIntervalCount[enm151_200]++;
+//     if(200 < interval_time && 250 >= interval_time)
+//         aryIntervalCount[enm201_250]++;
+//     if(250 < interval_time && 300 >= interval_time)
+//         aryIntervalCount[enm251_300]++;
+//     if(300 < interval_time && 350 >= interval_time)
+//         aryIntervalCount[enm301_350]++;
+//     if(350 < interval_time && 400 >= interval_time)
+//         aryIntervalCount[enm351_400]++;
+//     if(400 < interval_time && 450 >= interval_time)
+//         aryIntervalCount[enm401_450]++;
+//     if(450 < interval_time && 500 >= interval_time)
+//         aryIntervalCount[enm451_500]++;
+//     if(500 < interval_time)
+//         aryIntervalCount[enmOver501]++;
+// }
 
 
 //*********************************************************************************
@@ -64,10 +64,13 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
     //アイドル状態じゃ無い時は検知信号を無視()
     if (aryInfo[areaState] != enm_Sts0_WaitDetection) return;
 
-    if(aryTimeBuf[flgDetectFirstTime] == 1)
-        aryTimeBuf[flgDetectFirstTime] = 0;
-    //検知信号を受けて無視する時間が経過していないときは処理を中断
-    else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_NEXT_DETECT)) return;
+    //if(aryTimeBuf[flgDetectFirstTime] == 1)
+    //    aryTimeBuf[flgDetectFirstTime] = 0;
+
+    //検知信号を受けて無視する時間が経過していないときは処理を中断 
+    //PE側：TIME_CANCEL_NEXT_DETECT_PE
+    // W側：TIME_CANCEL_NEXT_DETECT_W
+    else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], aryTimeBuf[timeCancelNextDetect])) return;
 
     // if(aryInfo[areaState] == enm_Sts0_WaitDetection)
     // {

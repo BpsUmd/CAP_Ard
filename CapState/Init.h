@@ -16,13 +16,13 @@ enum _EnmAryInfo
     portNumDetection,
     portNumAir,
     portNumLED,
-    flgAirOrderWaitStart,//Air命令waitを開始しているか
-    flgDetectFirstTime
+    flgAirOrderWaitStart//Air命令waitを開始しているか
+    //flgDetectFirstTime
 };
 
 //=============================
-extern long AryTimeBuf_PE[10];
-extern long AryTimeBuf_W[10];
+extern long AryTimeBuf_PE[7];
+extern long AryTimeBuf_W[7];
 
 enum _TimeBuf
 {
@@ -32,10 +32,11 @@ enum _TimeBuf
     timePassEnd,
     timeWaitPassStart,
     timeGetDetect,
-    timePassSpeed,
-    timePassSpeedMin,
-    timePassInterval,
-    timePassIntervalMin
+    timeCancelNextDetect
+    //timePassSpeed,
+    //timePassSpeedMin,
+    //timePassInterval,
+    //timePassIntervalMin
     // timeAirSignalEnd,
     // timeAirInterval,
     // timeAirIntervalMin,
@@ -43,28 +44,28 @@ enum _TimeBuf
 };
 
 //=============================
-extern long AryIntervalCount_PE[11];
-extern long AryIntervalCount_W[11];
+// extern long AryIntervalCount_PE[11];
+// extern long AryIntervalCount_W[11];
 
-enum _IntervalCount
-{
-    enmUnder100 = 0,
-    enm101_150,
-    enm151_200,
-    enm201_250,
-    enm251_300,
-    enm301_350,
-    enm351_400,
-    enm401_450,
-    enm451_500,
-    enmOver501
-};
+// enum _IntervalCount
+// {
+//     enmUnder100 = 0,
+//     enm101_150,
+//     enm151_200,
+//     enm201_250,
+//     enm251_300,
+//     enm301_350,
+//     enm351_400,
+//     enm401_450,
+//     enm451_500,
+//     enmOver501
+// };
 
 //=============================
 enum _StateTransition
 {
     enm_Sts0_WaitDetection = 0,
-    enm_Sts1_Wait,
+    ////enm_Sts1_Wait,
     enm_Sts1_CheckPassOn,
     enm_Sts2_WaitPassOff,
     enm_Sts3_AirSignal
