@@ -67,6 +67,8 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
     //■PE
     if(aryInfo[portNumPass] == PORT_SENSOR_PASS_PE)
     {
+        //検知信号を受けて無視する時間が経過していないときは処理を中断 
+        //if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], aryTimeBuf[timeCancelNextDetect])) return;
         //PE検知を受けた時、通過がOFFである場合は信号を無視　※ノイズ対策
         if(digitalRead(aryInfo[portNumPass]) == PASS_OFF) return;
         //通常PE検知時は必ず通ONである為、通過OFF待ち状態へ

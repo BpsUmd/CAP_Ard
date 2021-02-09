@@ -45,8 +45,8 @@
 //通過センサのバタつきが起こっている為、
 //カメラ制御BOXからPE検出信号が、1つのCAPに対して複数送信される。
 //1つのPE信号を受けた後、一定時間のPE信号を無視するようにする。
-#define TIME_CANCEL_NEXT_DETECT_PE 250
-#define TIME_CANCEL_NEXT_DETECT_W 50
+//#define TIME_CANCEL_NEXT_DETECT_PE 250
+//#define TIME_CANCEL_NEXT_DETECT_W 50
 
 //カウント閾------------------------
 //カウント数管理から、時間管理に変更したので削除

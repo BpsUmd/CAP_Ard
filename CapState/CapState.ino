@@ -85,10 +85,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         //=======================================================================================
         //0 通常状態
         case enm_Sts0_WaitDetection:
-#pragma region 通常状態---------------------------
-
             break;
-#pragma endregion
 
         //=======================================================================================
         //待ち時間　通過より検知が先になった時の為に待ち時間を
@@ -120,7 +117,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         //1 "通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
         //※■※指定時間経っても割込が無い時は通常状態に戻す
         case enm_Sts2_WaitPassOff:
-#pragma region 通過完了待ち---------------------------
             if(digitalRead(aryInfo[portNumPass]) == PASS_OFF)
             {
                 digitalWrite(aryInfo[portNumLED], LED_OFF);
@@ -136,13 +132,11 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
             }
             break;
-#pragma endregion
 
 
         //=======================================================================================
         //エア命令ON時間
         case enm_Sts3_AirSignal:
-#pragma region エア命令信号発信-------------------------------
             // if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
             if(CheckElapsedTime(aryTimeBuf[timePassEnd], TIME_AIR_SIGNAL_ON))
             {
@@ -150,8 +144,6 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 ChangeState(aryInfo, enm_Sts0_WaitDetection);
             }
             break;
-#pragma endregion
-
     }
 }
 
