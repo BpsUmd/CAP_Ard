@@ -21,8 +21,8 @@ enum _EnmAryInfo
 };
 
 //=============================
-extern long AryTimeBuf_PE[7];
-extern long AryTimeBuf_W[7];
+extern long AryTimeBuf_PE[6];
+extern long AryTimeBuf_W[6];
 
 enum _TimeBuf
 {
@@ -31,8 +31,8 @@ enum _TimeBuf
     timePassOn,
     timePassEnd,
     timeWaitPassStart,
-    timeGetDetect,
-    timeCancelNextDetect
+    timeGetDetect
+    //timeCancelNextDetect
     //timePassSpeed,
     //timePassSpeedMin,
     //timePassInterval,
@@ -66,7 +66,7 @@ enum _StateTransition
 {
     enm_Sts0_WaitDetection = 0,
     ////enm_Sts1_Wait,
-    enm_Sts1_CheckPassOn,
+    enm_Sts1_CheckPassOn_W,
     enm_Sts2_WaitPassOff,
     enm_Sts3_AirSignal
 };

@@ -5,21 +5,24 @@ bool FlgW = false;
 int DebugCntAAA = 0;
 
 long AryInfoPE[7] = {0,
-                     PORT_SENSOR_PASS_2,
+                     PORT_SENSOR_PASS_PE,
                      PORT_DETECTION_PE,
                      PORT_AIR_PE,
                      PORT_LED_PE,
                      0,1};
 
 long AryInfoW[7] = {0,
-                    PORT_SENSOR_PASS_3,
+                    PORT_SENSOR_PASS_W,
                     PORT_DETECTION_W,
                     PORT_AIR_W,
                     PORT_LED_W,
                     0,1};
 
-long AryTimeBuf_PE[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_PE};
-long AryTimeBuf_W[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_W};
+// long AryTimeBuf_PE[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_PE};
+// long AryTimeBuf_W[7] = {0,0,0,0,0,0,TIME_CANCEL_NEXT_DETECT_W};
+
+long AryTimeBuf_PE[6] = {0,0,0,0,0,0};
+long AryTimeBuf_W[6] = {0,0,0,0,0,0};
 
 // long AryIntervalCount_PE[11] = {0,0,0,0,0,0,0,0,0,0,0};
 // long AryIntervalCount_W[11] = {0,0,0,0,0,0,0,0,0,0,0};
@@ -38,8 +41,8 @@ void InitPort()
     pinMode(PORT_DETECTION_PE, INPUT_PULLUP);
     pinMode(PORT_DETECTION_W, INPUT_PULLUP);
 
-    pinMode(PORT_SENSOR_PASS_2, INPUT_PULLUP);
-    pinMode(PORT_SENSOR_PASS_3, INPUT_PULLUP);
+    pinMode(PORT_SENSOR_PASS_PE, INPUT_PULLUP);
+    pinMode(PORT_SENSOR_PASS_W, INPUT_PULLUP);
 
     pinMode(PORT_AIR_PE, OUTPUT);
     pinMode(PORT_AIR_W, OUTPUT);

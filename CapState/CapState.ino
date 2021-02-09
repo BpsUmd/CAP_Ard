@@ -101,8 +101,9 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         //     break;
         
         //=======================================================================================
+        //■白のみ
         //通過センサがONになっているかチェック
-        case enm_Sts1_CheckPassOn:
+        case enm_Sts1_CheckPassOn_W:
                 //通過センサがONになっているかチェック
                 if(digitalRead(aryInfo[portNumPass]) == PASS_ON)
                 {
@@ -111,7 +112,7 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
                 }
                 //検知後、待ち時間以上経過しても通過センサがONにならない場合はアイドル状態に戻す
                 //else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
-                else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_PASS_ON))
+                else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_DETECT_W))
                     ChangeState(aryInfo, enm_Sts0_WaitDetection);
             break;
 

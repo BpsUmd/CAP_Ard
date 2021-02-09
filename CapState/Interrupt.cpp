@@ -64,18 +64,31 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
     //アイドル状態じゃ無い時は検知信号を無視()
     if (aryInfo[areaState] != enm_Sts0_WaitDetection) return;
 
+    //■PE
+    if(aryInfo[portNumPass] == PORT_SENSOR_PASS_PE)
+    {
+        //PE検知を受けた時、通過がOFFである場合は信号を無視　※ノイズ対策
+        if(digitalRead(aryInfo[portNumPass]) == PASS_OFF) return;
+        //通常PE検知時は必ず通ONである為、通過OFF待ち状態へ
+        aryInfo[areaState] = enm_Sts2_WaitPassOff;
+    }
+    //■白
+    else
+        //白検知が通過ONよりも早い場合の対策
+        //通過ON待ち状態へ
+        aryInfo[areaState] = enm_Sts1_CheckPassOn_W;
+
     //if(aryTimeBuf[flgDetectFirstTime] == 1)
     //    aryTimeBuf[flgDetectFirstTime] = 0;
 
     //検知信号を受けて無視する時間が経過していないときは処理を中断 
     //PE側：TIME_CANCEL_NEXT_DETECT_PE
     // W側：TIME_CANCEL_NEXT_DETECT_W
-    else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], aryTimeBuf[timeCancelNextDetect])) return;
+    //if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], aryTimeBuf[timeCancelNextDetect])) return;
 
     // if(aryInfo[areaState] == enm_Sts0_WaitDetection)
     // {
     //aryInfo[areaState] = enm_Sts1_Wait;
-    aryInfo[areaState] = enm_Sts1_CheckPassOn;
     digitalWrite(aryInfo[portNumLED], LED_ON);
     GetTime(aryTimeBuf[timeWaitStart]);
     GetTime(aryTimeBuf[timeGetDetect]);
