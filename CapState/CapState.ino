@@ -12,9 +12,6 @@
 
 //*********************************************************************************
 //*********************************************************************************
-//*********************************************************************************
-//*********************************************************************************
-//*********************************************************************************
 void setup() {
     Serial.begin(115200);
     InitPort();//ポートのイニシャライズ
@@ -83,12 +80,9 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
     switch(aryInfo[areaState])
     {
         //=======================================================================================
-        //0 通常状態
+        //0 アイドル状態
         case enm_Sts0_WaitDetection:
-#pragma region 通常状態---------------------------
-
             break;
-#pragma endregion
 
         //=======================================================================================
         //待ち時間　通過より検知が先になった時の為に待ち時間を
@@ -104,11 +98,18 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
         //通過センサがONになっているかチェック
         case enm_Sts1_CheckPassOn:
                 //通過センサがONになっているかチェック
+                //ONになっている事で通過OFF待ち状態へ移動
                 if(digitalRead(aryInfo[portNumPass]) == PASS_ON)
                 {
                     GetTime(aryTimeBuf[timeWaitPassStart]);
                     ChangeState(aryInfo, enm_Sts2_WaitPassOff);
                 }
+                //※通過センサノイズによる連続PE検知の対策
+                //PE検知ON時に通過OFFの場合は無視してアイドル状態に戻す
+                //(PE検知信号は必ず通過ON中に発信される)
+                else if(aryInfo[portNumPass] == PORT_SENSOR_PASS_PE)
+                    ChangeState(aryInfo, enm_Sts0_WaitDetection);
+
                 //検知後、待ち時間以上経過しても通過センサがONにならない場合はアイドル状態に戻す
                 //else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
                 else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_PASS_ON))

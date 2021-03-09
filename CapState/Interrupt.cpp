@@ -71,6 +71,7 @@ void OrderAir(long *aryInfo, long *aryTimeBuf)
     //PE側：TIME_CANCEL_NEXT_DETECT_PE
     // W側：TIME_CANCEL_NEXT_DETECT_W
     else if(!CheckElapsedTime(aryTimeBuf[timeGetDetect], aryTimeBuf[timeCancelNextDetect])) return;
+    
 
     // if(aryInfo[areaState] == enm_Sts0_WaitDetection)
     // {

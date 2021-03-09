@@ -5,14 +5,14 @@ bool FlgW = false;
 int DebugCntAAA = 0;
 
 long AryInfoPE[7] = {0,
-                     PORT_SENSOR_PASS_2,
+                     PORT_SENSOR_PASS_PE,
                      PORT_DETECTION_PE,
                      PORT_AIR_PE,
                      PORT_LED_PE,
                      0,1};
 
 long AryInfoW[7] = {0,
-                    PORT_SENSOR_PASS_3,
+                    PORT_SENSOR_PASS_W,
                     PORT_DETECTION_W,
                     PORT_AIR_W,
                     PORT_LED_W,
@@ -38,8 +38,8 @@ void InitPort()
     pinMode(PORT_DETECTION_PE, INPUT_PULLUP);
     pinMode(PORT_DETECTION_W, INPUT_PULLUP);
 
-    pinMode(PORT_SENSOR_PASS_2, INPUT_PULLUP);
-    pinMode(PORT_SENSOR_PASS_3, INPUT_PULLUP);
+    pinMode(PORT_SENSOR_PASS_PE, INPUT_PULLUP);
+    pinMode(PORT_SENSOR_PASS_W, INPUT_PULLUP);
 
     pinMode(PORT_AIR_PE, OUTPUT);
     pinMode(PORT_AIR_W, OUTPUT);
