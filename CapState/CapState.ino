@@ -1,9 +1,3 @@
-/*
- Name:    CAP_Ctrl.ino
- Created: 2020/12/15 15:35:40
- Author:  BPS-Umeda
-*/
-
 #include "Def.h"
 #include "Init.h"
 #include "Timer.h"
@@ -35,32 +29,16 @@ void setup() {
 
     //割り込み設定
     attachInterrupt(INT_NUM_AREA2, Int_DetIn_PE, FALLING);
-    // attachInterrupt(INT_NUM_AREA2, Int_SetPassOnTimePE, FALLING);
-
     attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);
-    // attachInterrupt(INT_NUM_AREA3, Int_SetPassOnTimePE, FALLING);
-
     Serial.println("-----Start-----");
-
-// #ifdef DEBUG_SERIAL_OUT
-//     Serial.println("-----PE State 0 Wait detection-----");
-//     Serial.println("-----W State 0 Wait detection-----");
-// #endif
 }
 
 //*********************************************************************************
 void loop() 
 {
-    //CtrlSignal(AryInfoPE, FlgPE, AREA_NUM_PE);
-    //CtrlSignal(AryInfoW, FlgW, AREA_NUM_W);
     CtrlSignal(AryInfoPE, AryTimeBuf_PE);
     CtrlSignal(AryInfoW, AryTimeBuf_W);
-    //Output_Interval_Count();
 }
-
-
-
-
 
 //*********************************************************************************
 //*********************************************************************************

@@ -1,9 +1,3 @@
-//#define DEBUG_TIME_SEND
-//#define SERIAL_SEND
-//#define DEBUG_SERIAL_OUT
-//#define DEBUG_SIGNAL
-
-
 //論理-----------------------
 #define LED_ON 0
 #define LED_OFF 1
@@ -11,15 +5,12 @@
 #define AIR_ON 0
 #define AIR_OFF 1
 
-// #define AIR_SIGNAL_ON 1
-// #define AIR_SIGNAL_OFF 0
-
 #define PASS_ON 0
 #define PASS_OFF 1
 
 //Port番号----------------------- 
-#define PORT_SENSOR_PASS_PE 4
-#define PORT_SENSOR_PASS_W 5
+#define PORT_SENSOR_PASS_PE 4//
+#define PORT_SENSOR_PASS_W 5//
 
 #define PORT_DETECTION_PE 2//割込み
 #define PORT_DETECTION_W 3//割込み
