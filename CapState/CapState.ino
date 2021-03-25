@@ -2,9 +2,9 @@
 #include "Init.h"
 #include "Timer.h"
 #include "Interrupt.h"
-#include "SerialCtrl.h"
 
 //*********************************************************************************
+//セットアップ
 //*********************************************************************************
 void setup() {
     Serial.begin(115200);
@@ -21,18 +21,16 @@ void setup() {
     digitalWrite(PORT_LED_AIR, LED_OFF);
 #else //DEBUG_TIME_SEND
     FlashLED(PORT_LED, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_PE, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_W, 3, 50, LED_OFF);
-    // FlashLED(PORT_LED_AIR, 3, 50, LED_OFF);
-
 #endif //DEBUG_TIME_SEND
 
     //割り込み設定
-    attachInterrupt(INT_NUM_AREA2, Int_DetIn_PE, FALLING);
-    attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);
+    attachInterrupt(INT_NUM_AREA2, Int_DetIn_PE, FALLING);//PE検知信号割込みポート
+    attachInterrupt(INT_NUM_AREA3, Int_DetIn_W, FALLING);//白検知信号割込みポート
     Serial.println("-----Start-----");
 }
 
+//*********************************************************************************
+//メインループ
 //*********************************************************************************
 void loop() 
 {
@@ -40,92 +38,80 @@ void loop()
     CtrlSignal(AryInfoW, AryTimeBuf_W);
 }
 
+
+
 //*********************************************************************************
+//状態遷移処理
+//aryInfo：ステータス配列
+//aryTimeBuf：時間管理配列
 //*********************************************************************************
-//*********************************************************************************
-
-
-
-
-
-//void CtrlSignal(long *aryInfo, bool& flg, int areaNum)
 void CtrlSignal(long *aryInfo, long *aryTimeBuf)
 {
-    long TimeBuf = 0;
+    long TimeBuf = 0;//未使用
 
-//===========================================================
-//===========================================================
     switch(aryInfo[areaState])
     {
-        //=======================================================================================
-        //0 アイドル状態
+        //--------------------------------------------------------------------------------------------------------------------------
+        //■アイドル状態　
+        //検知信号からの割込み待ち
         case enm_Sts0_WaitDetection:
             break;
-
-        //=======================================================================================
-        //待ち時間　通過より検知が先になった時の為に待ち時間を
-        // case enm_Sts1_Wait:
-        //     if(CheckElapsedTime(aryTimeBuf[timeWaitStart], TIME_WAIT))
-        //     {
-        //         GetTime(aryTimeBuf[timeWaitPassStart]);
-        //         ChangeState(aryInfo, enm_Sts2_WaitPassOff);
-        //     }
-        //     break;
         
-        //=======================================================================================
-        //通過センサがONになっているかチェック
+        //--------------------------------------------------------------------------------------------------------------------------
+        //■通過センサがONになっているかチェック
         case enm_Sts1_CheckPassOn:
                 //通過センサがONになっているかチェック
                 //ONになっている事で通過OFF待ち状態へ移動
                 if(digitalRead(aryInfo[portNumPass]) == PASS_ON)
                 {
-                    GetTime(aryTimeBuf[timeWaitPassStart]);
-                    ChangeState(aryInfo, enm_Sts2_WaitPassOff);
+                    GetTime(aryTimeBuf[timeWaitPassStart]);//エア命令準備開始時間をセット
+                    ChangeState(aryInfo, enm_Sts2_WaitPassOff);//通過完了待ち状態へ移行
                 }
                 //※通過センサノイズによる連続PE検知の対策
                 //PE検知ON時に通過OFFの場合は無視してアイドル状態に戻す
                 //(PE検知信号は必ず通過ON中に発信される)
                 else if(aryInfo[portNumPass] == PORT_SENSOR_PASS_PE)
-                    ChangeState(aryInfo, enm_Sts0_WaitDetection);
+                    ChangeState(aryInfo, enm_Sts0_WaitDetection);//アイドル状態へ移行
 
                 //検知後、待ち時間以上経過しても通過センサがONにならない場合はアイドル状態に戻す
-                //else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL))
                 else if(CheckElapsedTime(aryTimeBuf[timeGetDetect], TIME_CANCEL_PASS_ON))
-                    ChangeState(aryInfo, enm_Sts0_WaitDetection);
+                    ChangeState(aryInfo, enm_Sts0_WaitDetection);//アイドル状態へ移行
             break;
 
-        //=======================================================================================
-        //1 "通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
+        //--------------------------------------------------------------------------------------------------------------------------
+        //■"通過完了割込み待ち"　割込みが来たら "エア命令発信遅延" へ
         //※■※指定時間経っても割込が無い時は通常状態に戻す
         case enm_Sts2_WaitPassOff:
 #pragma region 通過完了待ち---------------------------
             if(digitalRead(aryInfo[portNumPass]) == PASS_OFF)
             {
+                //エア命令ON時間状態へ移行
                 digitalWrite(aryInfo[portNumLED], LED_OFF);
                 digitalWrite(aryInfo[portNumAir], AIR_ON);
-                GetTime(aryTimeBuf[timePassEnd]);
-                ChangeState(aryInfo, enm_Sts3_AirSignal);
+                GetTime(aryTimeBuf[timePassEnd]);//エア出力命令出力準備の終了時間をセット(未使用)
+                ChangeState(aryInfo, enm_Sts3_AirSignal);//エア命令ON時間状態へ移行
             }
-            //一定時間、割込みが無い場合は通常状態へ
+            //検知信号受信後、通過センサがOFFしない場合はタイムアウト[TIME_CANCEL]
             else if(CheckElapsedTime(aryTimeBuf[timeWaitPassStart], TIME_CANCEL) && 
                         aryInfo[areaState] == enm_Sts2_WaitPassOff)
             {
                 digitalWrite(aryInfo[portNumLED], LED_OFF);
-                ChangeState(aryInfo, enm_Sts0_WaitDetection);
+                ChangeState(aryInfo, enm_Sts0_WaitDetection);//アイドル状態へ移行
             }
             break;
 #pragma endregion
 
 
-        //=======================================================================================
-        //エア命令ON時間
+        //--------------------------------------------------------------------------------------------------------------------------
+        //■エア命令ON時間
+        //エア出力命令の時間を
         case enm_Sts3_AirSignal:
 #pragma region エア命令信号発信-------------------------------
-            // if(CheckCnt(aryInfo[cntBuf], CNT_AIR_SIGNAL) && aryInfo[areaState] == enm_Sts3_AirSignal)
+            //特定時間経過後、エア命令OFFしてアイドル状態へ移行[TIME_AIR_SIGNAL_ON]
             if(CheckElapsedTime(aryTimeBuf[timePassEnd], TIME_AIR_SIGNAL_ON))
             {
                 digitalWrite(aryInfo[portNumAir], AIR_OFF);
-                ChangeState(aryInfo, enm_Sts0_WaitDetection);
+                ChangeState(aryInfo, enm_Sts0_WaitDetection);//アイドル状態へ
             }
             break;
 #pragma endregion
@@ -133,26 +119,20 @@ void CtrlSignal(long *aryInfo, long *aryTimeBuf)
     }
 }
 
+//*********************************************************************************
+//移行する状態をセット
+//aryInfo：ステータス配列
+//stateNum：状態番号
 //*********************************************************************************
 void ChangeState(long *aryInfo, int stateNum)
 {
     aryInfo[areaState] = stateNum;
-    //aryInfo[cntBuf] = 0;
 }
+
 
 //*********************************************************************************
-bool CheckCnt(long& cnt, long endNum)
-{
-    if(cnt >= endNum)
-        return true;
-    else
-    {
-        cnt++;
-        return false;
-    }
-}
-
-//***************************************************a******************************
+//LED点滅処理
+//*********************************************************************************
 void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
 {
     for (int i = 0; i < loopNum; i++)
@@ -164,55 +144,3 @@ void FlashLED(int portNum, int loopNum, int delayTime, bool blEnd)
     }
     digitalWrite(portNum, blEnd);
 }
-
-//*********************************************************************************
-// void Output_Interval_Count()
-// {
-//     if(ReceiveSerial(Serial))
-//     {
-//         Serial.println("=====PE=====");
-//         Serial.print("Under100ms,");
-//         Serial.println(AryIntervalCount_PE[enmUnder100]);
-//         Serial.print("101-150ms,");
-//         Serial.println(AryIntervalCount_PE[enm101_150]);
-//         Serial.print("151-200ms,");
-//         Serial.println(AryIntervalCount_PE[enm151_200]);
-//         Serial.print("201-250ms,");
-//         Serial.println(AryIntervalCount_PE[enm201_250]);
-//         Serial.print("251-300ms,");
-//         Serial.println(AryIntervalCount_PE[enm251_300]);
-//         Serial.print("301-350ms,");
-//         Serial.println(AryIntervalCount_PE[enm301_350]);
-//         Serial.print("351-400ms,");
-//         Serial.println(AryIntervalCount_PE[enm351_400]);
-//         Serial.print("401-450ms,");
-//         Serial.println(AryIntervalCount_PE[enm401_450]);
-//         Serial.print("451-500ms,");
-//         Serial.println(AryIntervalCount_PE[enm451_500]);
-//         Serial.print("Over501ms,");
-//         Serial.println(AryIntervalCount_PE[enmOver501]);
-//         Serial.println("");
-//         Serial.println("=====White=====");
-//         Serial.print("Under100ms,");
-//         Serial.println(AryIntervalCount_W[enmUnder100]);
-//         Serial.print("101-150ms,");
-//         Serial.println(AryIntervalCount_W[enm101_150]);
-//         Serial.print("151-200ms,");
-//         Serial.println(AryIntervalCount_W[enm151_200]);
-//         Serial.print("201-250ms,");
-//         Serial.println(AryIntervalCount_W[enm201_250]);
-//         Serial.print("251-300ms,");
-//         Serial.println(AryIntervalCount_W[enm251_300]);
-//         Serial.print("301-350ms,");
-//         Serial.println(AryIntervalCount_W[enm301_350]);
-//         Serial.print("351-400ms,");
-//         Serial.println(AryIntervalCount_W[enm351_400]);
-//         Serial.print("401-450ms,");
-//         Serial.println(AryIntervalCount_W[enm401_450]);
-//         Serial.print("451-500ms,");
-//         Serial.println(AryIntervalCount_W[enm451_500]);
-//         Serial.print("Over501ms,");
-//         Serial.println(AryIntervalCount_W[enmOver501]);
-
-//     }
-//}

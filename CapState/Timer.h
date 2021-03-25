@@ -1,5 +1,4 @@
 #include <Arduino.h>
 
-long TimeElapsed(long start_time);
-void GetTime(long& valTime);
-bool CheckElapsedTime(long startTime, long targetTime);
+void GetTime(long& valTime);//時間取得（起動後の経過時間）
+bool CheckElapsedTime(long startTime, long targetTime);//時間タイムアウトチェック

@@ -2,41 +2,28 @@
 #include "Def.h"
 
 //*********************************************************************************
+//時間取得（起動後の経過時間）
+//valTime：時間格納変数
+//*********************************************************************************
 void GetTime(long& valTime)
 {
     valTime = millis();
 }
 
 //*********************************************************************************
-// // long TimeElapsed(long startTime)
-// // {
-// //     long resultTime = 0;
-// //     long nowTime = millis();
-
-// //     //millilの値がリセットされたときの対処
-// //     if(nowTime < startTime)
-// //         resultTime = nowTime + (TIME_MAX_VALUE - startTime);
-// //     else
-// //         resultTime = nowTime - startTime;
-
-// //     return resultTime;
-// // }
-
+//時間タイムアウトチェック
+//startTime：比較対象変数
+//targetTime：タイムアウト時間
 //*********************************************************************************
 bool CheckElapsedTime(long startTime, long targetTime)
 {
     long nowTime = millis();
-    // long resultTime;
     if(startTime > nowTime)
     {
-        //resultTime = nowTime + (TIME_MAX_VALUE - startTime);
         if((nowTime + (TIME_MAX_VALUE - startTime)) >= targetTime) return true;
     }
     else
         if(nowTime - startTime >= targetTime) return true;
-        // resultTime = nowTime - startTime;
-    
-    
     else
         return false;
 }

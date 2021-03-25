@@ -8,68 +8,43 @@ extern int DebugCntAAA;
 //=============================
 extern long AryInfoPE[7];
 extern long AryInfoW[7];
-
+//ステータス配列アドレス用　列挙
 enum _EnmAryInfo
 {
-    areaState = 0,
-    portNumPass,
-    portNumDetection,
-    portNumAir,
-    portNumLED,
-    flgAirOrderWaitStart//Air命令waitを開始しているか
-    //flgDetectFirstTime
+    areaState = 0,      //状態番号
+    portNumPass,        //通過センサ入力ポート番号
+    portNumDetection,   //検知信号入力ポート番号
+    portNumAir,         //エア命令出力ポート番号
+    portNumLED,         //LEDポート番号
+    flgAirOrderWaitStart//Air命令準備状態フラグ(未使用)
+    //flgDetectFirstTime//機器起動後から初回検知フラグ(未使用)
 };
 
 //=============================
 extern long AryTimeBuf_PE[7];
 extern long AryTimeBuf_W[7];
 
+//時間管理アドレス要　列挙
 enum _TimeBuf
 {
-    timeWaitStart = 0,
-    timeTargetBuf,
-    timePassOn,
-    timePassEnd,
-    timeWaitPassStart,
-    timeGetDetect,
-    timeCancelNextDetect
-    //timePassSpeed,
-    //timePassSpeedMin,
-    //timePassInterval,
-    //timePassIntervalMin
-    // timeAirSignalEnd,
-    // timeAirInterval,
-    // timeAirIntervalMin,
-    // timeAirIntervalAvr
+    timeWaitStart = 0,  //通過センサON待ち時間
+    timeTargetBuf,      //未使用
+    timePassOn,         //通過開始時間
+    timePassEnd,        //通過終了時間
+    timeWaitPassStart,  //通過センサON待ち時間
+    timeGetDetect,      //検知信号取得時間
+    timeCancelNextDetect//未使用
 };
 
 //=============================
-// extern long AryIntervalCount_PE[11];
-// extern long AryIntervalCount_W[11];
-
-// enum _IntervalCount
-// {
-//     enmUnder100 = 0,
-//     enm101_150,
-//     enm151_200,
-//     enm201_250,
-//     enm251_300,
-//     enm301_350,
-//     enm351_400,
-//     enm401_450,
-//     enm451_500,
-//     enmOver501
-// };
-
-//=============================
+//ステータス番号用　列挙
 enum _StateTransition
 {
     enm_Sts0_WaitDetection = 0,
-    ////enm_Sts1_Wait,
     enm_Sts1_CheckPassOn,
     enm_Sts2_WaitPassOff,
     enm_Sts3_AirSignal
 };
 
 
-void InitPort();
+void InitPort();//ポートイニシャライズ
